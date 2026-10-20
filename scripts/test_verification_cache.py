@@ -278,3 +278,35 @@ def test_stale_report_flags_omits_and_disable(cache, monkeypatch):
     monkeypatch.setenv(vc._STALE_ADVISORY_ENV, "0")  # disabled
     report = cache.stale_report(["old"])
     assert report["old"]["cache_stale_advisory"] is False
+
+
+@pytest.mark.parametrize("timestamp, expected_age", [
+    ("2026-10-19T12:00:00+00:00", 1.0),
+    ("2026-10-19T12:00:00", 1.0),
+    ("2026-10-19T21:00:00+09:00", 1.0),
+    ("2026-07-22T12:00:00+00:00", 90.0),
+    ("2026-07-22T11:59:59.999999+00:00", None),
+    ("2026-10-21T12:00:00+00:00", 0.0),
+    ("not-a-timestamp", None),
+    ("", None),
+])
+def test_timestamp_contract_across_cache_operations(cache, monkeypatch, timestamp, expected_age):
+    """取得と経過日数は同じ有効期限と時刻の規則に従う．"""
+    import verification_cache as vc
+
+    class FixedTime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return cls(2026, 10, 20, 12, tzinfo=timezone.utc)
+
+    monkeypatch.setattr(vc, "datetime", FixedTime)
+    cache.put("paper", "crossref", "query", {"matched": True})
+    with sqlite3.connect(cache.path) as conn:
+        conn.execute(
+            "UPDATE verification_cache SET verification_timestamp = ?",
+            (timestamp,),
+        )
+    expected_value = None if expected_age is None else {"matched": True}
+    assert cache.get("paper", "crossref", "query") == expected_value
+    assert cache.row_age_days("paper", "crossref", "query") == expected_age
+    assert cache.entry_age_days("paper") == expected_age
