@@ -1,4 +1,4 @@
-"""Check every maintained Markdown file and the plugin's public entry points."""
+"""管理対象のMarkdownとプラグインの呼出し口を確認する．"""
 from __future__ import annotations
 
 import argparse
@@ -32,12 +32,12 @@ def inspect(root: Path) -> dict:
         if exception:
             record["exception"] = exception["reason"]
             if hashlib.sha256(raw).hexdigest() != exception["sha256"]:
-                errors.append(f"{name}: preserved source changed; review its exception")
+                errors.append(f"{name}: 保持する原文が変わっています。例外の理由を再確認してください")
         elif oversized:
-            errors.append(f"{name}: exceeds 25 lines or 1200 characters")
+            errors.append(f"{name}: 25行または1,200文字を超えています")
         for number, line in enumerate(lines, 1):
             if len(line) > 40 and re.search(r"[\u3040-\u30ff\u3400-\u9fff]", line):
-                warnings.append(f"{name}:{number}: Japanese line has {len(line)} characters")
+                warnings.append(f"{name}:{number}: 日本語の行が{len(line)}文字あります")
         if path.name == "SKILL.md" or relative.parts[0] in {"agents", "commands"}:
             match = re.match(r"---\n(.*?)\n---(?:\n|$)", text, re.S)
             try:
@@ -52,7 +52,7 @@ def inspect(root: Path) -> dict:
                 ):
                     raise ValueError("invalid metadata")
             except (ValueError, yaml.YAMLError):
-                errors.append(f"{name}: invalid name or description")
+                errors.append(f"{name}: 名前または説明が規約に合っていません")
             if path.name == "SKILL.md":
                 skills.append(path.parent.name)
         for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", text):
@@ -60,15 +60,15 @@ def inspect(root: Path) -> dict:
             if not target or re.match(r"[a-zA-Z][a-zA-Z0-9+.-]*:", target):
                 continue
             if not (path.parent / target).exists():
-                errors.append(f"{name}: missing local link {target}")
-        for target in re.findall(r"Trigger the `([^`]+)` skill", text):
+                errors.append(f"{name}: リンク先がありません {target}")
+        for target in re.findall(r"`academic-research-skills:([a-z-]+)`", text):
             if not (root / target / "SKILL.md").is_file():
-                errors.append(f"{name}: missing command target {target}")
+                errors.append(f"{name}: 呼出し先のスキルがありません {target}")
         files.append(record)
     for missing in exceptions.keys() - seen:
-        errors.append(f"{missing}: stale exception")
+        errors.append(f"{missing}: 対象ファイルのない例外です")
     if len(skills) > 50:
-        errors.append("more than 50 skills")
+        errors.append("スキルが50個を超えています")
     marketplace = json.loads((root / ".claude-plugin/marketplace.json").read_text())
     manifests = [
         (root, marketplace["plugins"][0]["skills"]),
@@ -80,10 +80,10 @@ def inspect(root: Path) -> dict:
         for location in locations:
             path = base / location / "SKILL.md"
             if not path.is_file():
-                errors.append(f"missing registered skill {location}")
+                errors.append(f"登録されたスキルがありません {location}")
             registered.append(path.parent.name)
         if sorted(registered) != sorted(skills):
-            errors.append(f"{base.name}: skill registration differs from the catalog")
+            errors.append(f"{base.name}: スキルの登録内容が一覧と一致しません")
     return {"skills": skills, "files": files, "warnings": warnings, "errors": errors}
 
 
@@ -96,15 +96,15 @@ def main() -> int:
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
     else:
-        print(f"{len(report['skills'])} skills; {len(report['files'])} Markdown files")
+        print(f"スキル{len(report['skills'])}個，Markdown {len(report['files'])}ファイル")
         for item in report["files"]:
             if "exception" in item:
-                print(f"Preserved {item['file']} ({item['lines']} lines, "
-                      f"{item['characters']} characters): {item['exception']}")
+                print(f"原文保持：{item['file']}（{item['lines']}行，"
+                      f"{item['characters']}文字）：{item['exception']}")
         for message in report["warnings"]:
-            print("Warning:", message)
+            print("警告：", message)
         for message in report["errors"]:
-            print("Error:", message)
+            print("問題：", message)
     return bool(report["errors"])
 
 

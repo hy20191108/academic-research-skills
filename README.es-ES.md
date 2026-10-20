@@ -1,4 +1,3 @@
-# Academic Research Skills
+# 研究スキル
 
-This fork provides concise research skills.
-See [README](README.md) for scope, usage, and attribution.
+この派生版の指針と利用方法は[案内](README.md)を参照する．

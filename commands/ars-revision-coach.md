@@ -4,7 +4,7 @@ description: 論文の修正方針を相談する
 disable-model-invocation: true
 ---
 
-Trigger the `academic-paper` skill in `revision-coach` mode.
-Invoke `academic-research-skills:academic-paper` with `revision-coach $ARGUMENTS`.
-Read its SKILL.md from the plugin root and perform the requested task.
-Mode names select the task; they do not require the former stage sequence.
+`academic-research-skills:academic-paper`を呼び出す．
+引数は`revision-coach $ARGUMENTS`とする．
+プラグイン内のSKILL.mdを読み，依頼された仕事を行う．
+モード名は仕事の指定であり，固定工程ではない．

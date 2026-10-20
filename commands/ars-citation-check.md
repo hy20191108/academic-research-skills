@@ -4,7 +4,7 @@ description: 論文の引用を確認する
 disable-model-invocation: true
 ---
 
-Trigger the `academic-paper` skill in `citation-check` mode.
-Invoke `academic-research-skills:academic-paper` with `citation-check $ARGUMENTS`.
-Read its SKILL.md from the plugin root and perform the requested task.
-Mode names select the task; they do not require the former stage sequence.
+`academic-research-skills:academic-paper`を呼び出す．
+引数は`citation-check $ARGUMENTS`とする．
+プラグイン内のSKILL.mdを読み，依頼された仕事を行う．
+モード名は仕事の指定であり，固定工程ではない．

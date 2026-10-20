@@ -31,7 +31,7 @@ def test_supporting_documents_are_not_hidden(repository):
 def test_preserved_source_cannot_grow_under_an_old_exception(repository):
     extra = repository / "sr-screener" / "templates" / "prompts.md"
     extra.write_text(extra.read_text() + "\nAdditional rule.\n")
-    assert any("preserved source changed" in error for error in inspect(repository)["errors"])
+    assert any("保持する原文が変わっています" in error for error in inspect(repository)["errors"])
 
 
 def test_missing_screening_registration_is_detected(repository):
@@ -39,12 +39,12 @@ def test_missing_screening_registration_is_detected(repository):
     data = json.loads(path.read_text())
     data["pi"]["skills"].remove("../sr-screener")
     path.write_text(json.dumps(data))
-    assert any("registration differs" in error for error in inspect(repository)["errors"])
+    assert any("登録内容が一覧と一致しません" in error for error in inspect(repository)["errors"])
 
 
 def test_broken_supporting_link_is_detected(repository):
     (repository / "README.md").write_text("[missing](missing.md)\n")
-    assert any("missing local link" in error for error in inspect(repository)["errors"])
+    assert any("リンク先がありません" in error for error in inspect(repository)["errors"])
 
 
 def test_repository_conforms():
@@ -72,3 +72,12 @@ def test_plugin_keeps_the_write_guard_wired():
         and any("hooks/run_guard.sh" in hook["command"] for hook in entry["hooks"])
         for entry in entries
     )
+
+
+def test_japanese_command_checks_its_skill_identifier(repository):
+    command = repository / "commands" / "ars-plan.md"
+    text = command.read_text().replace(
+        "`academic-research-skills:academic-paper`", "`academic-research-skills:missing`"
+    )
+    command.write_text(text)
+    assert any("呼出し先のスキルがありません" in error for error in inspect(repository)["errors"])

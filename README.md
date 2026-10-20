@@ -1,4 +1,4 @@
-# Academic Research Skills
+# 研究スキル
 
 研究の仕事ごとに短い指針を持つスキル集．
 
@@ -15,7 +15,7 @@
 [変更理由](docs/changes.md)と[確認範囲](docs/validation.md)を残す．
 
 原著はCheng-I Wuの[Academic Research Skills][upstream]．
-本forkでは指示・構成・補助処理を変更した．
+本派生版では指示・構成・補助処理を変更した．
 [CC BY-NC 4.0](LICENSE)と[原著者の声明](NOTICE.md)を保持する．
 元の資産は[上流コミット](UPSTREAM.md)から取得できる．
 

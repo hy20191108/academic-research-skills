@@ -4,7 +4,7 @@ description: 問い・方法・知見を整理する
 disable-model-invocation: true
 ---
 
-Trigger the `deep-research` skill in `three-way-scan` mode.
-Invoke `academic-research-skills:deep-research` with `three-way-scan $ARGUMENTS`.
-Read its SKILL.md from the plugin root and perform the requested task.
-Mode names select the task; they do not require the former stage sequence.
+`academic-research-skills:deep-research`を呼び出す．
+引数は`three-way-scan $ARGUMENTS`とする．
+プラグイン内のSKILL.mdを読み，依頼された仕事を行う．
+モード名は仕事の指定であり，固定工程ではない．

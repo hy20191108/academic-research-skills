@@ -56,23 +56,24 @@ function hideArsSkills(systemPrompt) {
 async function probe(pi, command, args) {
   try {
     const result = await pi.exec(command, args, { timeout: 3000 });
-    if (result.code !== 0) return "missing";
-    return (result.stdout || result.stderr).trim().split("\n")[0] || "available";
+    if (result.code !== 0) return "未確認";
+    return (result.stdout || result.stderr).trim().split("\n")[0] || "利用可能";
   } catch {
-    return "missing";
+    return "未確認";
   }
 }
 
 const compatibility = `
-## Academic Research Skills compatibility for Pi
+## Piで研究スキルを使う時の指針
 
-Apply only while an ARS skill or /ars-* prompt is active.
-Read the selected SKILL.md; resolve its resources from ${repoRoot}.
-Use the current session's equivalent tools and model.
-Supporting files are optional; do not reinstate the upstream fixed workflow.
-Delegate only when requested and supported; shared context is not independent review.
-Use available search tools when needed; disclose unavailable or unverified sources.
-Claude hooks do not run in Pi. Do not claim their write-scope guard is active.
+研究スキルまたは/ars-*の実行中だけ適用する．
+選んだSKILL.mdを読み，関連ファイルは${repoRoot}から解決する．
+現在の環境で同じ機能を持つツールとモデルを使う．
+補助資料は必要時だけ読み，旧版の固定工程は適用しない．
+委任は依頼があり，環境が対応する時だけ行う．
+同じ文脈で担当を演じ分けても独立した査読とはみなさない．
+必要に応じて検索し，使えない機能や未確認の出典は明示する．
+PiではClaudeのフックは動かない．書込みガードが有効だとは報告しない．
 `;
 
 export default function (pi) {
@@ -120,36 +121,36 @@ export default function (pi) {
     );
     const expanded = executableBody.replace(/\$ARGUMENTS|\$@/g, () => args);
     const commandText = args && !hasArgumentPlaceholder
-      ? `${expanded}\n\nUser request / arguments:\n${args}`
+      ? `${expanded}\n\n依頼・引数：\n${args}`
       : expanded;
-    const skillName = body.match(/^Trigger the `([^`]+)` (?:skill|orchestrator)/m)?.[1];
-    const text = skillName ? `/skill:${skillName} ${commandText}` : commandText;
+    const skillName = body.match(/`academic-research-skills:([a-z-]+)`/)?.[1];
+    const text = skillNames.includes(skillName) ? `/skill:${skillName} ${commandText}` : commandText;
 
     return { action: "transform", text };
   });
 
   pi.registerCommand("ars-pi-start", {
-    description: "Enable ARS compatibility and automatic skill selection in this session",
+    description: "この会話で研究スキルの自動選択を有効にする",
     handler: async (_args, ctx) => {
       setArsActive(true);
-      ctx.ui.notify("ARS compatibility instructions enabled for this session", "info");
+      ctx.ui.notify("この会話で研究スキルを有効にしました", "info");
     },
   });
 
   pi.registerCommand("ars-pi-stop", {
-    description: "Disable ARS compatibility and automatic skill selection in this session",
+    description: "この会話で研究スキルの自動選択を解除する",
     handler: async (_args, ctx) => {
       setArsActive(false);
-      ctx.ui.notify("ARS compatibility instructions disabled for this session", "info");
+      ctx.ui.notify("この会話で研究スキルを解除しました", "info");
     },
   });
 
   pi.registerCommand("ars-pi-doctor", {
-    description: "Check optional Pi capabilities and local ARS runtime dependencies",
+    description: "Piの機能と補助ツールの利用可否を確認する",
     handler: async () => {
       const activeTools = new Set(pi.getActiveTools());
       const tools = pi.getAllTools().map((tool) => ({
-        label: `${activeTools.has(tool.name) ? "active tool" : "installed tool"}: ${tool.name}`,
+        label: `${activeTools.has(tool.name) ? "有効なツール" : "導入済みのツール"}: ${tool.name}`,
         search: `${tool.name} ${tool.description}`,
       }));
       const commands = pi.getCommands()
@@ -166,20 +167,20 @@ export default function (pi) {
       const pandoc = await probe(pi, "pandoc", ["--version"]);
       const tectonic = await probe(pi, "tectonic", ["--version"]);
       const sandbox = pi.getCommands().some((command) => command.name === "sandbox")
-        ? `detected; allow read access to ${repoRoot} when running outside the checkout`
-        : "not detected";
-      const format = (matches) => matches.length > 0 ? matches.join(", ") : "none; sequential/degraded mode";
+        ? `検出済み。別の場所で実行する時は${repoRoot}の読み取りを許可する`
+        : "未検出";
+      const format = (matches) => matches.length > 0 ? matches.join(", ") : "なし。順次実行など制限のある方式になる";
       const report = [
-        "ARS Pi doctor",
-        `Repository: ${repoRoot}`,
-        `Orchestration: ${format(orchestration)}`,
-        `Web retrieval: ${format(web)}`,
+        "Piでの研究スキルの利用環境",
+        `リポジトリ： ${repoRoot}`,
+        `複数担当の実行： ${format(orchestration)}`,
+        `ウェブ検索・取得： ${format(web)}`,
         `Python: ${python}`,
         `PyYAML: ${pyyaml}`,
         `Pandoc: ${pandoc}`,
         `Tectonic: ${tectonic}`,
-        `Sandbox: ${sandbox}`,
-        "Claude hooks: unavailable in Pi; write-scope enforcement remains prompt-level",
+        `実行範囲の制限： ${sandbox}`,
+        "Claudeのフック：Piでは動かないため，書込み範囲は指示による制限のみ",
       ].join("\n");
 
       pi.sendMessage({ customType: "ars-pi-doctor", content: report, display: true });

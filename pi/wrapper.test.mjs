@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import wrapper from "./wrapper.js";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const compatibilityMarker = "## Academic Research Skills compatibility for Pi";
+const compatibilityMarker = "## Piで研究スキルを使う時の指針";
 const arsSkillNames = ["deep-research", "academic-paper", "academic-paper-reviewer", "academic-pipeline", "sr-screener"];
 const arsSkillLocations = arsSkillNames.map((name) => resolve(repoRoot, name, "SKILL.md"));
 const externalSkillLocation = "/example/external/deep-research/SKILL.md";
@@ -373,4 +373,12 @@ test("direct screening requests activate the fifth skill", () => {
   const harness = createHarness();
   harness.handlers.get("input")({ text: "/skill:sr-screener screen these records" });
   assert.equal(runBeforeAgentStart(harness).includes(compatibilityMarker), true);
+});
+
+test("日本語のコマンド本文から対象スキルを呼び出す", () => {
+  const harness = createHarness();
+  const result = harness.handlers.get("input")({ text: "/ars-plan 論文の構成を考える" });
+  assert.match(result.text, /^\/skill:academic-paper /);
+  assert.match(result.text, /plan 論文の構成を考える/);
+  assert.doesNotMatch(result.text, /Trigger the|Invoke/);
 });

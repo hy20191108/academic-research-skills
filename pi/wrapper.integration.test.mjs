@@ -79,7 +79,7 @@ test("real Pi runner handles structured prompts, legacy options and earlier over
         assert.match(prompt, /Sentinel from a later extension/);
         assert.match(prompt, /\/missing\/external\/SKILL.md/);
         for (const name of names) assert.equal(prompt.includes(resolve(repoRoot, name, "SKILL.md")), active);
-        assert.equal(prompt.includes("## Academic Research Skills compatibility for Pi"), active);
+        assert.equal(prompt.includes("## Piで研究スキルを使う時の指針"), active);
         if (buildSystemPromptSections && !override) {
           assert.equal(result.systemPromptOptions.forceSystemPrompt, undefined);
           assert.equal(result.systemPromptOptions.skills.length, active ? names.length + 1 : 1);

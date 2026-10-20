@@ -18,4 +18,4 @@ uv run --locked python scripts/check_repository.py --json
 ```
 
 Codexの共通Stopフックは.agentsだけを確認する．
-本forkは上の確認コマンドとCIで全資料を確認する．
+本派生版は上の確認コマンドとCIで全資料を確認する．

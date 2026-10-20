@@ -1,3 +1,3 @@
-# Academic Research Skills
+# 研究スキル
 
-このforkの指針と利用方法は[README](README.md)を参照する．
+この派生版の指針と利用方法は[案内](README.md)を参照する．
