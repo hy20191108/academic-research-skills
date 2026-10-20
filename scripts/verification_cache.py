@@ -76,16 +76,16 @@ CREATE TABLE IF NOT EXISTS verification_cache (
 """
 
 
-def _parse_ts(verification_timestamp: str) -> datetime | None:
-    """Parse a stored ISO timestamp defensively (#541): naive timestamps
-    (written by older/other tools) are read as UTC; malformed strings return
-    None (callers treat the row as a miss / skip it — never abort)."""
+def _live_timestamp(verification_timestamp: str) -> datetime | None:
+    """有効期限内の時刻を返す．時差なしはUTC，不正・期限切れはNone．"""
     try:
         stored = datetime.fromisoformat(verification_timestamp)
     except (ValueError, TypeError):
         return None
     if stored.tzinfo is None:
         stored = stored.replace(tzinfo=timezone.utc)
+    if datetime.now(timezone.utc) - stored > timedelta(days=_TTL_DAYS):
+        return None
     return stored
 
 
@@ -141,7 +141,7 @@ class VerificationCache:
         if row is None:
             return None
         response_json, ts = row
-        if self._is_expired(ts):
+        if _live_timestamp(ts) is None:
             return None
         # #331: a corrupted payload (not decodable) or a non-dict value (e.g.
         # written by an older/other tool) is a miss, not a hard error — the
@@ -209,9 +209,7 @@ class VerificationCache:
         ages = []
         now = datetime.now(timezone.utc)
         for (ts,) in rows:
-            if self._is_expired(ts):
-                continue
-            stored = _parse_ts(ts)
+            stored = _live_timestamp(ts)
             if stored is None:
                 continue
             ages.append(max(0.0, (now - stored).total_seconds() / 86400.0))
@@ -230,9 +228,9 @@ class VerificationCache:
                 "WHERE citation_key = ? AND resolver_name = ? AND query_form = ?",
                 (citation_key, resolver_name, query_form),
             ).fetchone()
-        if row is None or self._is_expired(row[0]):
+        if row is None:
             return None
-        stored = _parse_ts(row[0])
+        stored = _live_timestamp(row[0])
         if stored is None:
             return None
         return max(
@@ -267,10 +265,3 @@ class VerificationCache:
                 "cache_stale_advisory": bool(threshold and rounded > threshold),
             }
         return report
-
-    @staticmethod
-    def _is_expired(verification_timestamp: str) -> bool:
-        stored = _parse_ts(verification_timestamp)
-        if stored is None:
-            return True  # malformed timestamp = expired = miss, never an abort
-        return datetime.now(timezone.utc) - stored > timedelta(days=_TTL_DAYS)
