@@ -66,7 +66,7 @@ def main():
     pending_ids, qc_ids, problems = srlib.ta_status(work, cfg)
     if qc_ids:
         raise SystemExit("full-text preparation blocked: the required title/abstract QC recheck is pending. "
-                         "Run build_workflow.py ta --jobs recheck and merge the decisions first; QC may "
+                         "Run generate_prompts.py ta --jobs recheck and merge the decisions first; QC may "
                          "advance more records into the full-text set.")
     if pending_ids or problems:
         raise SystemExit("full-text preparation blocked: finish every title/abstract decision and merge the "

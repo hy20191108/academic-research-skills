@@ -34,9 +34,9 @@ def test_preserved_source_cannot_grow_under_an_old_exception(repository):
 
 
 def test_missing_screening_registration_is_detected(repository):
-    path = repository / "package.json"
+    path = repository / ".claude-plugin/marketplace.json"
     data = json.loads(path.read_text())
-    data["pi"]["skills"].remove("./skills/sr-screener")
+    data["plugins"][0]["skills"].remove("./skills/sr-screener")
     path.write_text(json.dumps(data))
     assert any("登録内容が一覧と一致しません" in error for error in inspect(repository)["errors"])
 
@@ -67,14 +67,10 @@ def test_plugin_keeps_the_write_guard_wired():
 
 def test_only_skills_are_registered():
     assert not (ROOT / "commands").exists()
-    for relative in ["package.json"]:
-        config = json.loads((ROOT / relative).read_text())
-        assert set(config["pi"]) == {"skills"}
     for name in inspect(ROOT)["skills"]:
         assert (ROOT / "skills" / name / "SKILL.md").is_file()
         assert not (ROOT / "skills" / name).is_symlink()
         assert not (ROOT / name).exists()
-    assert not (ROOT / "pi").exists()
     assert set(inspect(ROOT)["skills"]) == {
         "deep-research", "academic-paper", "academic-paper-reviewer",
         "academic-pipeline", "sr-screener",

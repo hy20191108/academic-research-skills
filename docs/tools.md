@@ -8,7 +8,7 @@
 
 既読申告は読解の証拠ではなく，取消時も元の記録を残す．キャッシュ削除だけでは再検証にならない．
 文献選定はskills/sr-screener/scripts/を使う．
-prepare_records.pyで入力，build_workflow.pyで依頼生成，merge_decisions.pyで判断集約を行う．
+prepare_records.pyで入力，generate_prompts.pyで依頼生成，merge_decisions.pyで判断集約を行う．
 本文確認はprepare_fulltext.py，結果出力はbuild_outputs.pyを使う．設定例は同スキルのtemplates/にある．
 複数担当の生成は依頼がある時だけ行い，モデル名は利用環境に合わせる．引数は各ファイルの--helpを参照する．
 
@@ -16,7 +16,7 @@ prepare_records.pyで入力，build_workflow.pyで依頼生成，merge_decisions
 APIの利用条件と認証は実行前に確認する．中国語文献の送信先はクライアントの設定・実装に従う．
 原稿・資料の送信は依頼と環境の権限に従い，非公開原稿や認証情報を検索語に含めない．
 選定・既読記録・キャッシュはローカルで処理する．選定用の依頼文は生成だけではモデルを呼ばず，実行時に文献情報を送る．
-Claude CodeのPreToolUseガードは設定された担当名と書込み範囲に適用する．対象外の担当やPiには同じ強制力がない．
+Claude CodeのPreToolUseガードは設定された担当名と書込み範囲に適用する．対象外の担当やCodexには同じ強制力がない．
 秘密情報や悪用可能な詳細を公開Issueへ載せない．上流への報告は[Security Advisories][security]を使う．本派生版は上流の応答期限や保守体制を保証しない．
 
 [security]: https://github.com/Imbad0202/academic-research-skills/security/advisories

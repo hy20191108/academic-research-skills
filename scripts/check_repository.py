@@ -70,19 +70,14 @@ def inspect(root: Path) -> dict:
     if len(skills) > 50:
         errors.append("スキルが50個を超えています")
     marketplace = json.loads((root / ".claude-plugin/marketplace.json").read_text())
-    manifests = [
-        (root, marketplace["plugins"][0]["skills"]),
-        (root, json.loads((root / "package.json").read_text())["pi"]["skills"]),
-    ]
-    for base, locations in manifests:
-        registered = []
-        for location in locations:
-            path = base / location / "SKILL.md"
-            if not path.is_file():
-                errors.append(f"登録されたスキルがありません {location}")
-            registered.append(path.parent.name)
-        if sorted(registered) != sorted(skills):
-            errors.append(f"{base.name}: スキルの登録内容が一覧と一致しません")
+    registered = []
+    for location in marketplace["plugins"][0]["skills"]:
+        path = root / location / "SKILL.md"
+        if not path.is_file():
+            errors.append(f"登録されたスキルがありません {location}")
+        registered.append(path.parent.name)
+    if sorted(registered) != sorted(skills):
+        errors.append(f"{root.name}: スキルの登録内容が一覧と一致しません")
     return {"skills": skills, "files": files, "warnings": warnings, "errors": errors}
 
 

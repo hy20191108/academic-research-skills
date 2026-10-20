@@ -8,7 +8,7 @@
     "sha256": "8243bf7b5132393a751fef212e73fedd926bc8af55e9bdb085764f8d8d9d3254"
   },
   "skills/sr-screener/templates/prompts.md": {
-    "reason": "10種類の指示を日本語化し，変数・判定条件・JSON形式・出力言語を保持する．",
-    "sha256": "761ccbd36436922ebcc7ec51539d94f8958601af6502a78639c1254ff9b52610"
+    "reason": "Claude CodeとCodex向けの10種類の指示を保持する．変数・判定条件・JSON形式・出力言語は固定する．",
+    "sha256": "f95d7bdf7df6b453e535cec166e9efe930e7abd58a4a271341a361d881570dc6"
   }
 }

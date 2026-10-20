@@ -6,8 +6,8 @@ Usage:
                             [--stage ta|ft] [--protocol confirmed_protocol.md]
                             [--overrides overrides.csv] [--pilot-labels pilot_labels.csv] [--audit]
 
-PATH may be a Workflow run journal (journal.jsonl), a folder searched recursively for
-journal.jsonl files and *.json decision files, or a JSON file holding objects like
+PATH may be a folder searched recursively for *.json decision files,
+or a JSON file holding objects like
 {"label": "A:b001@<context_id from index.json>", "decisions": [{"id": "R00001", "d": "exclude", "code": "E2", "why": "..."}]}.
 Labels: A:<batch>, B:<batch>, ADJ:<batch>, QC:<batch> (title/abstract) and FTA:<id>, FTB:<id>,
 FTADJ:<id> (full text). Suffixes such as ":retry" are ignored; "·" is accepted as separator.
@@ -28,7 +28,7 @@ Rules (see references/decision_rules.md):
     near-miss exclusions go to the senior reviewer, and those records count as pending until
     it has decided them (a joint exclusion never reaches the adjudicator);
   * --pilot-labels compares the AI decisions with the review team's own labels for the pilot
-    records (same columns as overrides.csv) and writes pilot_check.json; build_workflow.py
+    records (same columns as overrides.csv) and writes pilot_check.json; generate_prompts.py
     refuses to screen outside the recorded pilot (including --jobs pending) until every labelled
     record has been compared and the AI missed no record the team advanced.
 
@@ -69,7 +69,7 @@ def iter_results(paths):
         if os.path.isdir(p):
             for root, _, fs in os.walk(p):
                 for f in fs:
-                    if f == "journal.jsonl" or (f.endswith(".json") and not f.endswith(".meta.json")):
+                    if f.endswith(".json") and not f.endswith(".meta.json"):
                         files.append(os.path.join(root, f))
         elif os.path.isfile(p):
             files.append(p)
@@ -77,28 +77,13 @@ def iter_results(paths):
             raise SystemExit(f"--from path not found: {p}")
     files = sorted(set(files), key=lambda f: (os.path.getmtime(f), f))
     for f in files:
-        if f.endswith(".jsonl"):
-            labels = {}
+        try:
             with open(f, encoding="utf-8") as fh:
-                for line in fh:
-                    try:
-                        o = json.loads(line)
-                    except ValueError:
-                        continue
-                    if o.get("type") == "started":
-                        labels[o.get("agentId")] = o.get("label", "")
-                    elif o.get("type") == "result":
-                        res = o.get("result")
-                        if isinstance(res, dict) and isinstance(res.get("decisions"), list):
-                            yield f, labels.get(o.get("agentId"), ""), res["decisions"]
-        else:
-            try:
-                with open(f, encoding="utf-8") as fh:
-                    obj = json.load(fh)
-            except (ValueError, UnicodeDecodeError):
-                continue
-            for label, decs in extract_json(obj):
-                yield f, label, decs
+                obj = json.load(fh)
+        except (ValueError, UnicodeDecodeError):
+            continue
+        for label, decs in extract_json(obj):
+            yield f, label, decs
 
 
 def short(d):
@@ -303,11 +288,11 @@ def merge_ta(a, cfg, work):
     n_pq = sum(len(p["ids"]) for p in pend_qc)
     if n_ps or n_pa:
         print(f"PENDING: {n_ps} records still need a reviewer decision in {len(pend_screen)} batches; "
-              f"{n_pa} conflicts need adjudication -> build_workflow.py ta --jobs pending")
+              f"{n_pa} conflicts need adjudication -> generate_prompts.py ta --jobs pending")
         print("the required QC recheck of joint exclusions is drawn once screening is complete")
     elif n_pq:
         print(f"PENDING QC: {n_pq} exclusions (joint-exclusion sample and near-miss) await the required senior "
-              "recheck -> build_workflow.py ta --jobs recheck")
+              "recheck -> generate_prompts.py ta --jobs recheck")
     else:
         print("complete: every record has a final decision and the required QC recheck is done")
 
@@ -507,7 +492,7 @@ def merge_ft(a, cfg, work):
           f"kappa={agree['kappa']} PABAK={agree['pabak']}")
     if pend_items or pend_adj:
         print(f"PENDING: {len(pend_items)} reports need a reviewer decision, {len(pend_adj)} need adjudication "
-              "-> build_workflow.py ft --jobs pending")
+              "-> generate_prompts.py ft --jobs pending")
     ta_ids, qc_ids, problems, uncovered, stale = srlib.fulltext_status(work, cfg)
     if ta_ids or problems or stale:
         print("INCOMPLETE: title/abstract screening or required title/abstract QC is still pending; "
@@ -535,7 +520,7 @@ def main():
     if a.protocol:
         srlib.activate_context(work, a.stage, a.protocol, cfg)
     if not srlib.current_context(work, a.stage, cfg):
-        raise SystemExit("no current review/protocol/config identity: regenerate the workflow or pass --protocol "
+        raise SystemExit("no current review/protocol/config identity: regenerate the prompts or pass --protocol "
                          "with the confirmed protocol before merging")
     if a.stage == "ta":
         merge_ta(a, cfg, work)

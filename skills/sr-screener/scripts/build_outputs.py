@@ -264,7 +264,7 @@ def main():
                 "screening log", "")]
     if not complete:
         summary.append((f"INCOMPLETE: {len(pending_ids)} records need decisions or required rechecks "
-                        "(resume with build_workflow.py --jobs pending, then --jobs recheck for the required QC "
+                        "(resume with generate_prompts.py --jobs pending, then --jobs recheck for the required QC "
                         "recheck). Numbers below are provisional.", ""))
         summary += [("INCOMPLETE: " + problem, "") for problem in state_problems]
         if a.stage == "ft" and ta_pending_ids:

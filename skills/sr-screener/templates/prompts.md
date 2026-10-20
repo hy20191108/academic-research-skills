@@ -1,6 +1,6 @@
 # 文献選定担当への指示
 
-選定処理はこのファイルの指示だけを使う．scripts/build_workflow.pyが{{変数}}を埋め，実行用スクリプトへ組み込む．--emit-promptsはWorkflowツールを使わない実行のため，同じ指示をファイルへ出力する．指示は生成後のスクリプトではなく，ここで編集する．
+scripts/generate_prompts.pyが{{変数}}を埋め，Claude CodeとCodexへ渡す依頼文とindex.jsonを出力する．指示は生成後のファイルではなく，ここで編集する．
 担当の役割，判定規則，選定計画の順序は固定する．全バッチで共通にしてモデル提供者がキャッシュできるようにし，バッチ固有の依頼を最後に置く．
 変数：PERSONA，STAGE_NAME，CORE，CODES，PROTOCOL，FILE，READ_LIMIT，READ_HALF，READ_NEXT，N，FIRST，LAST，ID_ALTERNATION，AFTER，ID_LIST，ID，TITLE，PDF，DISPUTE．
 
@@ -41,19 +41,19 @@
 
 <!-- prompt:task_batch_read -->
 依頼：
-Readツールだけを使い，{{FILE}}を読む．
+利用環境のファイル読取り機能だけを使い，{{FILE}}を読む．
 offset=1，limit={{READ_LIMIT}}で全体を1回で読む．ツールが大きすぎると報告した場合だけ，limit={{READ_HALF}}，offset=1，次にoffset={{READ_NEXT}}のように分割し，「=== END OF BATCH」まで読む．各レコードは「### Rxxxxx | year | type | Lang: ...」の見出しで始まる．
 バッチは{{N}}件，IDは{{FIRST}}から{{LAST}}まで．各レコードに一つずつ，過不足なく{{N}}件の{id, d, code, why}を返す．
-StructuredOutputツールで返す．使えない場合はJSONオブジェクト{"decisions": [...]}だけを返す．
+JSONオブジェクト{"decisions": [...]}だけを返す．
 <!-- /prompt -->
 
 <!-- prompt:task_grep_subset -->
 依頼：
-Grepツールだけを1回使い，必要なレコードを取得する：
-  Grep with path="{{FILE}}", pattern="^### ({{ID_ALTERNATION}}) ", output_mode="content", -A={{AFTER}}, head_limit=0
+利用環境のファイル検索機能（Grepまたはrg）だけを1回使い，次の条件で必要なレコードを取得する：
+  path="{{FILE}}", pattern="^### ({{ID_ALTERNATION}}) ", output_mode="content", -A={{AFTER}}, head_limit=0
 各レコードは「### Rxxxxx」の見出しから次の「### R」の直前まで．他のレコードに属する本文は使わない．
 次の{{N}}件だけを選定する：{{ID_LIST}}．
-各レコードに一つの{id, d, code, why}をStructuredOutputツールで返す．使えない場合はJSONオブジェクト{"decisions": [...]}だけを返す．
+各レコードに一つの{id, d, code, why}を{"decisions": [...]}に入れ，そのJSONオブジェクトだけを返す．
 <!-- /prompt -->
 
 <!-- prompt:adjudicator_intro -->
@@ -71,7 +71,7 @@ Grepツールだけを1回使い，必要なレコードを取得する：
 <!-- prompt:task_ft_pdf -->
 依頼：
 レコード{{ID}}．データベースのタイトル：「{{TITLE}}」．
-Readツールだけを使い，{{PDF}}を読む．
+利用環境のファイル読取り機能だけを使い，{{PDF}}を読む．
 PDFが20ページを超える場合はpages="1-20"，次に"21-40"のように分割し，方法と結果を読むまで続ける．参考文献一覧と補足資料は省略できる．
-{{DISPUTE}}idを"{{ID}}"とした{id, d, code, why, where}を一つだけ，{"decisions": [...]}に入れてStructuredOutputツールで返す．使えない場合はそのJSONオブジェクトだけを返す．
+{{DISPUTE}}idを"{{ID}}"とした{id, d, code, why, where}を一つだけ，{"decisions": [...]}に入れ，そのJSONオブジェクトだけを返す．
 <!-- /prompt -->

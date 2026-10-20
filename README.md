@@ -14,7 +14,6 @@ Claude Codeへの導入：
 /plugin install academic-research-skills@academic-research-skills
 ```
 Codexではskills/配下の必要なスキルを登録する．
-Piではリポジトリのルートで`pi install .`を実行する．
 [補助ツール](docs/tools.md)を使う時はリポジトリ全体を取得する．
 導入後，仕事を自然文で依頼する．
 

@@ -179,7 +179,7 @@ def activate_context(work, stage, protocol_path, cfg):
     old = upgrade_config_identity(work, state, stage, cfg)
     if old and "config_scope" not in old:
         raise SystemExit("legacy config identity cannot be upgraded with a changed config. Restore the "
-                         "config used for this stage and regenerate its workflow first; then apply edits. "
+                         "config used for this stage and regenerate its prompts first; then apply edits. "
                          "Existing decisions have been kept.")
     identity["content_id"] = digest(identity)
     if old and old.get("content_id") == identity["content_id"]:
@@ -372,11 +372,6 @@ def load_config(path):
             "both reviewers excluded is required, because a joint exclusion never reaches the adjudicator "
             "(all joint exclusions are rechecked when there are fewer)")
     return cfg
-
-
-def model_overrides(cfg):
-    """Roles whose model differs from the shipped default, for the cost check."""
-    return {r: m for r, m in cfg["models"].items() if m != DEFAULT_CONFIG["models"].get(r)}
 
 
 def exclusion_codes(cfg, stage="ta"):
