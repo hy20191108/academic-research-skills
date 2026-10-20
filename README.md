@@ -9,8 +9,11 @@
 | [academic-paper-reviewer](academic-paper-reviewer/SKILL.md) | 論文を査読する |
 | [academic-pipeline](academic-pipeline/SKILL.md) | 研究から論文まで進める |
 | [sr-screener](sr-screener/SKILL.md) | レビュー対象を選ぶ |
+| [record-reading](record-reading/SKILL.md) | 文献の既読申告を管理する |
+| [invalidate-citation-cache](invalidate-citation-cache/SKILL.md) | 文献の検証キャッシュを消す |
+| [check-research-environment](check-research-environment/SKILL.md) | 研究ツールの利用可否を調べる |
 
-[導入](QUICKSTART.md)と[コマンド](MODE_REGISTRY.md)を参照する．
+[導入](QUICKSTART.md)を参照し，仕事を自然文で依頼する．
 [補助ツール](docs/tools.md)は必要時だけ使う．
 [変更理由](docs/changes.md)と[確認範囲](docs/validation.md)を残す．
 

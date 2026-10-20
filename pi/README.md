@@ -6,10 +6,10 @@
 pi -e ./pi
 ```
 
-/ars-pi-startで有効化，/ars-pi-stopで解除する．
-/ars-pi-doctorで利用できる機能を確認する．
-/ars-*と5つの/skill:名から依頼できる．
-スキルの内容は親ディレクトリの原本を読む．
+標準のスキル選択で，依頼に合うSKILL.mdを読む．
+明示する時は/skill:academic-paperのように指定する．
+利用環境の確認はcheck-research-environmentに依頼する．
+開始・停止用の独自コマンドは使わない．
 
 ClaudeのフックはPiでは動かない．
 書込みガードが有効だとは報告しない．

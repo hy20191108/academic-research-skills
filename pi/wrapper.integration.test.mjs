@@ -19,7 +19,7 @@ test("real Pi runner handles structured prompts, legacy options and earlier over
   const { version } = JSON.parse(readFileSync(resolve(packageRoot, "package.json"), "utf8"));
   t.diagnostic(`Pi ${version}, Node ${process.version}, ${process.platform}/${process.arch}`);
 
-  for (const active of [false, true]) {
+  for (const active of [true]) {
     for (const override of [false, true]) {
       await t.test(`active=${active}, earlier override=${override}`, async (t) => {
         const tempRoot = mkdtempSync(join(tmpdir(), "ars-pi-composition-"));
@@ -46,7 +46,7 @@ test("real Pi runner handles structured prompts, legacy options and earlier over
         const runner = new ExtensionRunner(loaded.extensions, loaded.runtime, tempRoot, {}, {});
         const errors = [];
         runner.onError((error) => errors.push(error));
-        const names = ["deep-research", "academic-paper", "academic-paper-reviewer", "academic-pipeline", "sr-screener"];
+        const names = ["deep-research", "academic-paper", "academic-paper-reviewer", "academic-pipeline", "sr-screener", "record-reading", "invalidate-citation-cache", "check-research-environment"];
         const options = {
           cwd: tempRoot,
           skills: [
@@ -92,4 +92,20 @@ test("real Pi runner handles structured prompts, legacy options and earlier over
       });
     }
   }
+});
+
+test("標準のスキル読込みで全登録を自動選択の対象にする", {
+  skip: !packageRoot && "PI_CODING_AGENT_ROOTでPiの場所を指定する",
+}, async () => {
+  const { loadSkillsFromDir } = await import(pathToFileURL(resolve(packageRoot, "dist/core/skills.js")).href);
+  const manifest = JSON.parse(readFileSync(resolve(repoRoot, "package.json"), "utf8"));
+  const names = [];
+  for (const dir of manifest.pi.skills) {
+    const result = loadSkillsFromDir({ dir: resolve(repoRoot, dir), source: "test" });
+    assert.deepEqual(result.diagnostics, []);
+    assert.equal(result.skills.length, 1);
+    assert.equal(result.skills[0].disableModelInvocation, false);
+    names.push(result.skills[0].name);
+  }
+  assert.equal(new Set(names).size, 8);
 });

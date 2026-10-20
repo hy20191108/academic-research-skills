@@ -17,7 +17,10 @@
         "./academic-paper-reviewer",
         "./academic-pipeline",
         "./deep-research",
-        "./sr-screener"
+        "./sr-screener",
+        "./record-reading",
+        "./invalidate-citation-cache",
+        "./check-research-environment"
       ]
     }
   ]

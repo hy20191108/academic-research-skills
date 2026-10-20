@@ -74,10 +74,9 @@ def test_plugin_keeps_the_write_guard_wired():
     )
 
 
-def test_japanese_command_checks_its_skill_identifier(repository):
-    command = repository / "commands" / "ars-plan.md"
-    text = command.read_text().replace(
-        "`academic-research-skills:academic-paper`", "`academic-research-skills:missing`"
-    )
-    command.write_text(text)
-    assert any("呼出し先のスキルがありません" in error for error in inspect(repository)["errors"])
+def test_only_skills_are_registered():
+    assert not (ROOT / "commands").exists()
+    for relative in ["package.json", "pi/package.json"]:
+        config = json.loads((ROOT / relative).read_text())
+        assert "prompts" not in config["pi"]
+    assert {"record-reading", "invalidate-citation-cache", "check-research-environment"} <= set(inspect(ROOT)["skills"])

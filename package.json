@@ -16,10 +16,10 @@
       "./academic-paper",
       "./academic-paper-reviewer",
       "./academic-pipeline",
-      "./sr-screener"
-    ],
-    "prompts": [
-      "./commands"
+      "./sr-screener",
+      "./record-reading",
+      "./invalidate-citation-cache",
+      "./check-research-environment"
     ]
   }
 }
