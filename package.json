@@ -9,11 +9,11 @@
   "license": "CC-BY-NC-4.0",
   "pi": {
     "skills": [
-      "./deep-research",
-      "./academic-paper",
-      "./academic-paper-reviewer",
-      "./academic-pipeline",
-      "./sr-screener"
+      "./skills/deep-research",
+      "./skills/academic-paper",
+      "./skills/academic-paper-reviewer",
+      "./skills/academic-pipeline",
+      "./skills/sr-screener"
     ]
   }
 }

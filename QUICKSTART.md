@@ -7,7 +7,7 @@ Claude Codeではこのforkを登録する．
 /plugin install academic-research-skills@academic-research-skills
 ```
 
-Codexでは必要なスキルのディレクトリを登録する．
+Codexではskills/配下の必要なスキルを登録する．
 補助ツールを使う時はリポジトリ全体を取得する．
 Piではリポジトリのルートで`pi install .`を実行する．
 ClaudeのフックはPiでは動かない．

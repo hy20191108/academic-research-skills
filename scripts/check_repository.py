@@ -62,7 +62,7 @@ def inspect(root: Path) -> dict:
             if not (path.parent / target).exists():
                 errors.append(f"{name}: リンク先がありません {target}")
         for target in re.findall(r"`academic-research-skills:([a-z-]+)`", text):
-            if not (root / target / "SKILL.md").is_file():
+            if not (root / "skills" / target / "SKILL.md").is_file():
                 errors.append(f"{name}: 呼出し先のスキルがありません {target}")
         files.append(record)
     for missing in exceptions.keys() - seen:

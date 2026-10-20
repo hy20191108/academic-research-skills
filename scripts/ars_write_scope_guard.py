@@ -104,10 +104,10 @@ INFRA_PROTECTED_GLOBS = [
     # #413-materialized byte-identical copies — these carry the same name binding and were
     # previously unprotected; closed in #448 when the plugin-root anchoring re-established
     # which files count as plugin infra).
-    "deep-research/agents/*.md",
-    "academic-paper/agents/*.md",
-    "academic-paper-reviewer/agents/*.md",
-    "academic-pipeline/agents/*.md",
+    "skills/deep-research/agents/*.md",
+    "skills/academic-paper/agents/*.md",
+    "skills/academic-paper-reviewer/agents/*.md",
+    "skills/academic-pipeline/agents/*.md",
     "shared/agents/*.md",
     "agents/*.md",
     # CLAUDE.md / .claude/CLAUDE.md are DELIBERATELY NOT protected (#459). They were

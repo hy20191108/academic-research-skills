@@ -11,11 +11,11 @@
     "reason": "合成API応答の作成条件と証拠の限界を保つ．実行指示ではない．",
     "sha256": "28a919401a3dcd8716d37cb66abb1e80316ab92157ea45b9fe7a58a488a07c33"
   },
-  "sr-screener/examples/example_protocol_dta.md": {
+  "skills/sr-screener/examples/example_protocol_dta.md": {
     "reason": "選定ツールの回帰試験で使う固定プロトコルのため，原文を保持する．",
     "sha256": "cf2c91c821aa65d1e55e8ac4bc64fff9bb5b290183f823c4d0e8e9701d9d4f77"
   },
-  "sr-screener/templates/prompts.md": {
+  "skills/sr-screener/templates/prompts.md": {
     "reason": "10種類の生成依頼と判断条件・JSON契約を保つ．使う依頼だけを生成する．",
     "sha256": "6b8258314e3972a4bc06504b3163faf346312b8a12175816efa4289a76d13f6d"
   }

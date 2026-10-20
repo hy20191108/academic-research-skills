@@ -13,11 +13,11 @@
       "version": "3.23.2",
       "license": "CC-BY-NC-4.0",
       "skills": [
-        "./academic-paper",
-        "./academic-paper-reviewer",
-        "./academic-pipeline",
-        "./deep-research",
-        "./sr-screener"
+        "./skills/academic-paper",
+        "./skills/academic-paper-reviewer",
+        "./skills/academic-pipeline",
+        "./skills/deep-research",
+        "./skills/sr-screener"
       ]
     }
   ]

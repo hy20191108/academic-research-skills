@@ -1,6 +1,6 @@
 """End-to-end regression test for the sr-screener scripts on synthetic records.
 
-Runs the skill's own scripts (sr-screener/scripts/) as a user would: parse and
+Runs the skill's own scripts (skills/sr-screener/scripts/) as a user would: parse and
 de-duplicate exports, generate reviewer prompts, merge simulated reviewer returns,
 and build the deliverables. No model is called; the reviewer decisions are
 hand-written fixtures. What this pins:
@@ -41,7 +41,7 @@ import yaml
 from jsonschema import Draft202012Validator
 
 REPO = Path(__file__).resolve().parent.parent
-SKILL = REPO / "sr-screener"
+SKILL = REPO / "skills" / "sr-screener"
 SCRIPTS = SKILL / "scripts"
 PROTOCOL = SKILL / "examples" / "example_protocol_dta.md"
 CORPUS_SCHEMA = REPO / "shared" / "contracts" / "passport" / "literature_corpus_entry.schema.json"
