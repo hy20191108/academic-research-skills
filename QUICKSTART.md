@@ -9,7 +9,8 @@ Claude Codeではこのforkを登録する．
 
 Codexでは必要なスキルのディレクトリを登録する．
 補助ツールを使う時はリポジトリ全体を取得する．
-[Piでの利用](pi/README.md)は別のアダプターを使う．
+Piではリポジトリのルートで`pi install .`を実行する．
+ClaudeのフックはPiでは動かない．
 
 ローカルの確認にはPython 3.11以上，uv，Node.jsが必要．
 
@@ -17,7 +18,7 @@ Codexでは必要なスキルのディレクトリを登録する．
 uv sync --locked
 uv run --locked python scripts/check_repository.py
 uv run --locked pytest -q
-node --test pi/wrapper.test.mjs pi/wrapper.integration.test.mjs
+node --test tests/pi-skills.test.mjs
 ```
 
 ネットワークを使う文献検索は利用環境の権限に従う．

@@ -17,4 +17,4 @@ jobs:
       - run: uv sync --locked
       - run: uv run --locked python scripts/check_repository.py
       - run: uv run --locked pytest -q
-      - run: node --test pi/wrapper.test.mjs pi/wrapper.integration.test.mjs
+      - run: node --test tests/pi-skills.test.mjs

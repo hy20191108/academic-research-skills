@@ -73,7 +73,6 @@ def inspect(root: Path) -> dict:
     manifests = [
         (root, marketplace["plugins"][0]["skills"]),
         (root, json.loads((root / "package.json").read_text())["pi"]["skills"]),
-        (root / "pi", json.loads((root / "pi/package.json").read_text())["pi"]["skills"]),
     ]
     for base, locations in manifests:
         registered = []
