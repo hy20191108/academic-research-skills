@@ -32,7 +32,7 @@ from typing import Any
 # Spec OQ-1: 90-day window is a guess, deferred for empirical tuning.
 # Also documented user-facing in docs/DATA_FLOWS.md and docs/SETUP.md —
 # update both when tuning.
-_TTL_DAYS = 90
+_CACHE_TTL_DAYS = 90
 
 # #541 staleness advisory (Ren et al. arXiv:2607.13104 §6.2.3 "scheduled review
 # and attenuation"): entries older than this many days are still HITS (the TTL
@@ -44,7 +44,7 @@ _STALE_ADVISORY_ENV = "ARS_CACHE_STALE_ADVISORY_DAYS"
 _STALE_ADVISORY_DEFAULT_DAYS = 30
 
 
-def stale_advisory_days() -> int:
+def stale_advisory_threshold_days() -> int:
     """The #541 advisory threshold in days (env-overridable; 0 disables).
 
     A malformed or negative override falls back to the default rather than
@@ -61,10 +61,10 @@ def stale_advisory_days() -> int:
         return _STALE_ADVISORY_DEFAULT_DAYS
     return value
 
-_DEFAULT_PATH = Path.home() / ".cache" / "ars" / "verification.db"
-_ENV_PATH = "ARS_VERIFICATION_CACHE_PATH"
+_DEFAULT_CACHE_PATH = Path.home() / ".cache" / "ars" / "verification.db"
+_CACHE_PATH_ENV = "ARS_VERIFICATION_CACHE_PATH"
 
-_SCHEMA = """
+_CREATE_CACHE_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS verification_cache (
     citation_key           TEXT NOT NULL,
     resolver_name          TEXT NOT NULL,
@@ -76,27 +76,27 @@ CREATE TABLE IF NOT EXISTS verification_cache (
 """
 
 
-def _live_timestamp(verification_timestamp: str) -> datetime | None:
+def _parse_unexpired_timestamp(verification_timestamp: str) -> datetime | None:
     """有効期限内の時刻を返す．時差なしはUTC，不正・期限切れはNone．"""
     try:
-        stored = datetime.fromisoformat(verification_timestamp)
+        verified_at = datetime.fromisoformat(verification_timestamp)
     except (ValueError, TypeError):
         return None
-    if stored.tzinfo is None:
-        stored = stored.replace(tzinfo=timezone.utc)
-    if datetime.now(timezone.utc) - stored > timedelta(days=_TTL_DAYS):
+    if verified_at.tzinfo is None:
+        verified_at = verified_at.replace(tzinfo=timezone.utc)
+    if datetime.now(timezone.utc) - verified_at > timedelta(days=_CACHE_TTL_DAYS):
         return None
-    return stored
+    return verified_at
 
 
-def _resolve_path(path: str | None) -> Path:
+def _resolve_cache_path(path: str | None) -> Path:
     """Explicit arg wins over the env override, which wins over the default."""
     if path is not None:
         return Path(path)
-    env = os.environ.get(_ENV_PATH)
+    env = os.environ.get(_CACHE_PATH_ENV)
     if env:
         return Path(env)
-    return _DEFAULT_PATH
+    return _DEFAULT_CACHE_PATH
 
 
 class VerificationCache:
@@ -107,13 +107,13 @@ class VerificationCache:
     """
 
     def __init__(self, path: str | None = None) -> None:
-        self.path = str(_resolve_path(path))
+        self.path = str(_resolve_cache_path(path))
         Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         # `closing(...) as conn, conn` — the outer ctx closes the handle, the
         # inner (the connection itself) commits/rolls back. Honors the
         # short-lived-connection contract (no leaked handle across stages).
         with closing(self._connect()) as conn, conn:
-            conn.execute(_SCHEMA)
+            conn.execute(_CREATE_CACHE_TABLE_SQL)
 
     def _connect(self) -> sqlite3.Connection:
         conn = sqlite3.connect(self.path)
@@ -140,8 +140,8 @@ class VerificationCache:
             ).fetchone()
         if row is None:
             return None
-        response_json, ts = row
-        if _live_timestamp(ts) is None:
+        response_json, verification_timestamp = row
+        if _parse_unexpired_timestamp(verification_timestamp) is None:
             return None
         # #331: a corrupted payload (not decodable) or a non-dict value (e.g.
         # written by an older/other tool) is a miss, not a hard error — the
@@ -189,7 +189,7 @@ class VerificationCache:
                 (citation_key,),
             )
 
-    def entry_age_days(self, citation_key: str) -> float | None:
+    def oldest_unexpired_entry_age_days(self, citation_key: str) -> float | None:
         """Age in days of the OLDEST live (non-expired) cached row for a
         citation, across resolvers and query forms — deliberately the most
         conservative citation-level signal (#541): an unexpired row for an
@@ -206,14 +206,14 @@ class VerificationCache:
                 "WHERE citation_key = ?",
                 (citation_key,),
             ).fetchall()
-        ages = []
+        entry_ages_days = []
         now = datetime.now(timezone.utc)
-        for (ts,) in rows:
-            stored = _live_timestamp(ts)
-            if stored is None:
+        for (verification_timestamp,) in rows:
+            verified_at = _parse_unexpired_timestamp(verification_timestamp)
+            if verified_at is None:
                 continue
-            ages.append(max(0.0, (now - stored).total_seconds() / 86400.0))
-        return max(ages) if ages else None
+            entry_ages_days.append(max(0.0, (now - verified_at).total_seconds() / 86400.0))
+        return max(entry_ages_days) if entry_ages_days else None
 
     def row_age_days(
         self, citation_key: str, resolver_name: str, query_form: str,
@@ -230,11 +230,11 @@ class VerificationCache:
             ).fetchone()
         if row is None:
             return None
-        stored = _live_timestamp(row[0])
-        if stored is None:
+        verified_at = _parse_unexpired_timestamp(row[0])
+        if verified_at is None:
             return None
         return max(
-            0.0, (datetime.now(timezone.utc) - stored).total_seconds() / 86400.0
+            0.0, (datetime.now(timezone.utc) - verified_at).total_seconds() / 86400.0
         )
 
     def stale_report(
@@ -249,19 +249,19 @@ class VerificationCache:
         threshold is enabled (>0) and the oldest live row exceeds it.
         Advisory-only: callers MUST NOT gate on this report.
         """
-        threshold = stale_advisory_days()
+        threshold_days = stale_advisory_threshold_days()
         report: dict[str, dict[str, Any]] = {}
-        for key in citation_keys:
-            age = self.entry_age_days(key)
-            if age is None:
+        for citation_key in citation_keys:
+            age_days = self.oldest_unexpired_entry_age_days(citation_key)
+            if age_days is None:
                 continue
-            rounded = round(age, 1)
+            rounded_age_days = round(age_days, 1)
             # The flag is computed from the SAME rounded value the report
             # emits, so the emitted pair is always self-consistent (a raw age
             # of threshold+epsilon that rounds down to the threshold does not
             # flag).
-            report[key] = {
-                "cache_age_days": rounded,
-                "cache_stale_advisory": bool(threshold and rounded > threshold),
+            report[citation_key] = {
+                "cache_age_days": rounded_age_days,
+                "cache_stale_advisory": bool(threshold_days and rounded_age_days > threshold_days),
             }
         return report

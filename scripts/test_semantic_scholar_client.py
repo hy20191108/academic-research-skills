@@ -544,9 +544,9 @@ class CLIWiringTest(unittest.TestCase):
     fired before reading the passport. Verify the production wiring path
     now actually constructs a SemanticScholarClient instance."""
 
-    def test_build_default_ss_client_returns_real_client(self) -> None:
+    def test_build_semantic_scholar_client_returns_real_client(self) -> None:
         import migrate_literature_corpus_to_v3_7_3 as mig
-        client = mig._build_default_ss_client()
+        client = mig._build_semantic_scholar_client()
         self.assertIsInstance(client, ssc.SemanticScholarClient)
 
 

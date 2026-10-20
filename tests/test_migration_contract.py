@@ -58,8 +58,8 @@ def test_migration_preserves_format_and_existing_evidence(tmp_path, monkeypatch,
             result["semantic_scholar_unmatched"] = False
         return result, {}
 
-    monkeypatch.setattr(migration.cs, "build_signals_with_omissions", signals)
-    report = migration.migrate_passport(passport, ss_client=object(), dry_run=dry_run)
+    monkeypatch.setattr(migration.contamination_signals, "build_signals_with_omissions", signals)
+    report = migration.migrate_passport(passport, semantic_scholar_client=object(), dry_run=dry_run)
     assert report == {
         "processed": 4, "patched": 3, "skipped_already_migrated": 0,
         "skipped_insufficient_data": 1, "manual_unmatched_omitted": 1,
@@ -74,7 +74,7 @@ def test_migration_preserves_format_and_existing_evidence(tmp_path, monkeypatch,
             output,
         )
         assert normalized == EXPECTED
-        again = migration.migrate_passport(passport, ss_client=object(), dry_run=False)
+        again = migration.migrate_passport(passport, semantic_scholar_client=object(), dry_run=False)
         assert again["patched"] == 0
         assert again["skipped_already_migrated"] == 3
         assert passport.read_text() == output

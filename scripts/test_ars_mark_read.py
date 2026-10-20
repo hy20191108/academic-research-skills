@@ -32,7 +32,7 @@ from scripts import ars_mark_read
 SCRIPT = Path(__file__).parent / "ars_mark_read.py"
 
 
-def _run(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
+def _run_mark_read(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, str(SCRIPT), *args],
         cwd=cwd, capture_output=True, text=True,
@@ -69,7 +69,7 @@ class TestMarkReadHappyPath(unittest.TestCase):
             passport = root / "passport_abc123.json"
             _write_passport(passport, citation_keys=["smith2024"])
 
-            result = _run(
+            result = _run_mark_read(
                 "smith2024", "--passport-path", str(passport),
                 "--scope", "full_text",
             )
@@ -94,7 +94,7 @@ class TestMarkReadHappyPath(unittest.TestCase):
             passport = root / "passport_abc123.json"
             _write_passport(passport, citation_keys=["smith2024", "jones2023"])
 
-            result = _run(
+            result = _run_mark_read(
                 "smith2024", "jones2023", "--passport-path", str(passport),
                 "--scope", "full_text",
             )
@@ -113,12 +113,12 @@ class TestMarkReadHappyPath(unittest.TestCase):
             _write_passport(passport, citation_keys=["smith2024", "jones2023"])
 
             # First mark
-            _run(
+            _run_mark_read(
                 "smith2024", "--passport-path", str(passport),
                 "--scope", "full_text",
             )
             # Second mark, different key
-            result = _run(
+            result = _run_mark_read(
                 "jones2023", "--passport-path", str(passport),
                 "--scope", "full_text",
             )
@@ -136,7 +136,7 @@ class TestMarkReadFailFast(unittest.TestCase):
         """Fail-fast mode 1: --passport-path omitted and no ambient
         passport discoverable. Emit canonical error, exit non-zero."""
         with TemporaryDirectory() as tmp:
-            result = _run("smith2024", cwd=Path(tmp))
+            result = _run_mark_read("smith2024", cwd=Path(tmp))
 
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("[ARS-MARK-READ ERROR:", result.stderr + result.stdout)
@@ -147,7 +147,7 @@ class TestMarkReadFailFast(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             phantom = Path(tmp) / "does_not_exist.json"
 
-            result = _run(
+            result = _run_mark_read(
                 "smith2024", "--passport-path", str(phantom)
             )
 
@@ -168,7 +168,7 @@ class TestMarkReadFailFast(unittest.TestCase):
             # Strip read permission from the parent dir.
             os.chmod(locked, 0o000)
             try:
-                result = _run(
+                result = _run_mark_read(
                     "smith2024", "--passport-path", str(passport)
                 )
 
@@ -196,7 +196,7 @@ class TestMarkReadFailFast(unittest.TestCase):
             # sibling read-log file.
             os.chmod(root, 0o500)
             try:
-                result = _run(
+                result = _run_mark_read(
                     "smith2024", "--passport-path", str(passport)
                 )
 
@@ -218,7 +218,7 @@ class TestMarkReadCitationKeyValidation(unittest.TestCase):
             passport = root / "passport.json"
             _write_passport(passport, citation_keys=["smith2024"])
 
-            result = _run(
+            result = _run_mark_read(
                 "bogus_key", "--passport-path", str(passport)
             )
 
@@ -245,7 +245,7 @@ class TestMarkReadCitationKeyValidation(unittest.TestCase):
             passport = root / "passport.json"
             _write_passport(passport, citation_keys=["smith2024"])
 
-            result = _run(
+            result = _run_mark_read(
                 "smith2024",
                 "bogus_key",
                 "--passport-path",
@@ -271,12 +271,12 @@ class TestUnmarkRead(unittest.TestCase):
             root = Path(tmp)
             passport = root / "passport.json"
             _write_passport(passport, citation_keys=["smith2024"])
-            _run(
+            _run_mark_read(
                 "smith2024", "--passport-path", str(passport),
                 "--scope", "full_text",
             )
 
-            result = _run(
+            result = _run_mark_read(
                 "smith2024", "--passport-path", str(passport), "--unmark"
             )
 
@@ -296,12 +296,12 @@ class TestUnmarkRead(unittest.TestCase):
             root = Path(tmp)
             passport = root / "passport.json"
             _write_passport(passport, citation_keys=["smith2024", "jones2023"])
-            _run(
+            _run_mark_read(
                 "smith2024", "--passport-path", str(passport),
                 "--scope", "full_text",
             )
 
-            result = _run(
+            result = _run_mark_read(
                 "jones2023", "--passport-path", str(passport), "--unmark"
             )
 
@@ -325,7 +325,7 @@ class TestMarkReadYAMLPassport(unittest.TestCase):
             passport = root / "passport.yaml"
             _write_passport(passport, citation_keys=["smith2024"])
 
-            result = _run(
+            result = _run_mark_read(
                 "smith2024", "--passport-path", str(passport),
                 "--scope", "full_text",
             )
@@ -344,7 +344,7 @@ class TestMarkReadYAMLPassport(unittest.TestCase):
             passport = root / "passport.yaml"
             _write_passport(passport, citation_keys=["smith2024"])
 
-            result = _run(
+            result = _run_mark_read(
                 "nobody2099", "--passport-path", str(passport)
             )
 
@@ -369,7 +369,7 @@ class TestReadLogUnwritableExistingFile(unittest.TestCase):
             # Read-only on the existing log file. Parent dir stays writable.
             log_path.chmod(stat.S_IRUSR)
             try:
-                result = _run(
+                result = _run_mark_read(
                     "smith2024", "--passport-path", str(passport)
                 )
                 self.assertNotEqual(
@@ -393,7 +393,7 @@ class TestReadScopeAttestation(unittest.TestCase):
         root = Path(tmp)
         passport = root / "p.yaml"
         _write_passport(passport, citation_keys=["smith2024", "lee2023"])
-        result = _run(*keys, "--passport-path", str(passport), *extra)
+        result = _run_mark_read(*keys, "--passport-path", str(passport), *extra)
         return passport, result
 
     def test_scope_less_new_mark_is_rejected(self):
@@ -467,11 +467,11 @@ class TestReadScopeAttestation(unittest.TestCase):
             root = Path(tmp)
             passport = root / "p.yaml"
             _write_passport(passport, citation_keys=["smith2024"])
-            _run(
+            _run_mark_read(
                 "smith2024", "--passport-path", str(passport),
                 "--scope", "full_text",
             )
-            result = _run(
+            result = _run_mark_read(
                 "smith2024", "--passport-path", str(passport),
                 "--unmark", "--scope", "full_text",
             )
@@ -499,7 +499,7 @@ class TestReadScopeAttestation(unittest.TestCase):
             log_path.write_text(
                 yaml.safe_dump(legacy_log, sort_keys=False), encoding="utf-8"
             )
-            result = _run(
+            result = _run_mark_read(
                 "lee2023", "--passport-path", str(passport),
                 "--scope", "abstract_only",
             )
@@ -521,11 +521,11 @@ class TestReadScopeAttestation(unittest.TestCase):
             root = Path(tmp)
             passport = root / "p.yaml"
             _write_passport(passport, citation_keys=["smith2024"])
-            _run(
+            _run_mark_read(
                 "smith2024", "--passport-path", str(passport),
                 "--scope", "full_text",
             )
-            result = _run(
+            result = _run_mark_read(
                 "smith2024", "--passport-path", str(passport),
                 "--unmark", "--note", "",
             )
@@ -646,7 +646,7 @@ class TestReadScopeAttestation(unittest.TestCase):
                 "--note", "intro only",
             )
             self.assertEqual(result.returncode, 0, result.stderr)
-            _run("smith2024", "--passport-path", str(passport), "--unmark")
+            _run_mark_read("smith2024", "--passport-path", str(passport), "--unmark")
             jsonschema.validate(_read_log(passport), schema)
 
 
@@ -673,7 +673,7 @@ class TestExistingLedgerFailClosed(unittest.TestCase):
             else:
                 args.extend(("--scope", "full_text"))
 
-            result = _run(*args)
+            result = _run_mark_read(*args)
 
             self.assertNotEqual(result.returncode, 0)
             combined = result.stderr + result.stdout

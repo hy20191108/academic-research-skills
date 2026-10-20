@@ -60,7 +60,7 @@ def test_put_overwrites_same_key(cache):
 
 def test_expired_entry_returns_none(tmp_path, monkeypatch):
     """An entry older than the TTL (90 days) is a miss."""
-    from verification_cache import VerificationCache, _TTL_DAYS
+    from verification_cache import VerificationCache, _CACHE_TTL_DAYS
 
     db = tmp_path / "verification.db"
     monkeypatch.setenv("ARS_VERIFICATION_CACHE_PATH", str(db))
@@ -70,7 +70,7 @@ def test_expired_entry_returns_none(tmp_path, monkeypatch):
     # Backdate the stored verification_timestamp past the TTL by writing
     # directly to the underlying row.
     stale = (
-        datetime.now(timezone.utc) - timedelta(days=_TTL_DAYS + 1)
+        datetime.now(timezone.utc) - timedelta(days=_CACHE_TTL_DAYS + 1)
     ).isoformat()
     conn = sqlite3.connect(str(db))
     conn.execute(
@@ -85,7 +85,7 @@ def test_expired_entry_returns_none(tmp_path, monkeypatch):
 
 
 def test_fresh_entry_within_ttl_returns_value(tmp_path, monkeypatch):
-    from verification_cache import VerificationCache, _TTL_DAYS
+    from verification_cache import VerificationCache, _CACHE_TTL_DAYS
 
     db = tmp_path / "verification.db"
     monkeypatch.setenv("ARS_VERIFICATION_CACHE_PATH", str(db))
@@ -93,7 +93,7 @@ def test_fresh_entry_within_ttl_returns_value(tmp_path, monkeypatch):
     c.put("recent2026", "arxiv", "2605.18661", {"matched": True})
 
     fresh = (
-        datetime.now(timezone.utc) - timedelta(days=_TTL_DAYS - 1)
+        datetime.now(timezone.utc) - timedelta(days=_CACHE_TTL_DAYS - 1)
     ).isoformat()
     conn = sqlite3.connect(str(db))
     conn.execute(
@@ -231,26 +231,26 @@ def test_stale_threshold_default_env_zero_and_malformed(monkeypatch):
     import verification_cache as vc
 
     monkeypatch.delenv(vc._STALE_ADVISORY_ENV, raising=False)
-    assert vc.stale_advisory_days() == vc._STALE_ADVISORY_DEFAULT_DAYS
+    assert vc.stale_advisory_threshold_days() == vc._STALE_ADVISORY_DEFAULT_DAYS
     monkeypatch.setenv(vc._STALE_ADVISORY_ENV, "7")
-    assert vc.stale_advisory_days() == 7
+    assert vc.stale_advisory_threshold_days() == 7
     monkeypatch.setenv(vc._STALE_ADVISORY_ENV, "0")
-    assert vc.stale_advisory_days() == 0
+    assert vc.stale_advisory_threshold_days() == 0
     monkeypatch.setenv(vc._STALE_ADVISORY_ENV, "not-a-number")
-    assert vc.stale_advisory_days() == vc._STALE_ADVISORY_DEFAULT_DAYS
+    assert vc.stale_advisory_threshold_days() == vc._STALE_ADVISORY_DEFAULT_DAYS
     monkeypatch.setenv(vc._STALE_ADVISORY_ENV, "-5")
-    assert vc.stale_advisory_days() == vc._STALE_ADVISORY_DEFAULT_DAYS
+    assert vc.stale_advisory_threshold_days() == vc._STALE_ADVISORY_DEFAULT_DAYS
 
 
 def test_entry_age_none_without_rows(cache):
-    assert cache.entry_age_days("absent") is None
+    assert cache.oldest_unexpired_entry_age_days("absent") is None
 
 
 def test_entry_age_oldest_live_row_wins(cache):
     cache.put("k1", "crossref", "10.1/x", {"matched": True})
     _backdate(cache, "k1", 40)
     cache.put("k1", "openalex", "10.1/x", {"matched": True})
-    age = cache.entry_age_days("k1")
+    age = cache.oldest_unexpired_entry_age_days("k1")
     assert age is not None
     assert age > 39  # the oldest (40d) row wins over the fresh one
 
@@ -258,7 +258,7 @@ def test_entry_age_oldest_live_row_wins(cache):
 def test_entry_age_ignores_expired_rows(cache):
     cache.put("k2", "crossref", "10.1/y", {"matched": True})
     _backdate(cache, "k2", 120)  # past the 90-day TTL -> not a live row
-    assert cache.entry_age_days("k2") is None
+    assert cache.oldest_unexpired_entry_age_days("k2") is None
 
 
 def test_stale_report_flags_omits_and_disable(cache, monkeypatch):
@@ -309,4 +309,4 @@ def test_timestamp_contract_across_cache_operations(cache, monkeypatch, timestam
     expected_value = None if expected_age is None else {"matched": True}
     assert cache.get("paper", "crossref", "query") == expected_value
     assert cache.row_age_days("paper", "crossref", "query") == expected_age
-    assert cache.entry_age_days("paper") == expected_age
+    assert cache.oldest_unexpired_entry_age_days("paper") == expected_age

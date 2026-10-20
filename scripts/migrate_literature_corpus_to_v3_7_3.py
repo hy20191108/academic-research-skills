@@ -26,9 +26,9 @@ from ruamel.yaml import YAML
 
 # Dual-path import: see openalex_client.py comment.
 try:
-    import contamination_signals as cs
+    import contamination_signals
 except ImportError:
-    from scripts import contamination_signals as cs
+    from scripts import contamination_signals
 
 
 # Skip-reason categories surface in the migration report so users can
@@ -87,7 +87,7 @@ def _is_insufficient(entry: Mapping[str, Any]) -> bool:
 def migrate_passport(
     path: Path,
     *,
-    ss_client: cs.SemanticScholarClient,
+    semantic_scholar_client: contamination_signals.SemanticScholarClient,
     dry_run: bool,
     verbose: bool = False,
 ) -> dict[str, int]:
@@ -117,7 +117,7 @@ def migrate_passport(
         if verbose:
             print(f"[{path}] {msg}", file=sys.stderr)
 
-    mutated = False
+    has_changes = False
     for entry in corpus:
         report["processed"] += 1
         key = entry.get("citation_key", "<no-citation-key>")
@@ -130,7 +130,7 @@ def migrate_passport(
             report[_SKIP_INSUFFICIENT_DATA] += 1
             _log(f"{key}: skip (insufficient data — missing year)")
             continue
-        signals, omissions = cs.build_signals_with_omissions(entry, ss_client)
+        signals, omissions = contamination_signals.build_signals_with_omissions(entry, semantic_scholar_client)
         if existing is not None:
             # Partial-fill recovery (codex R1-3 closure): an earlier run
             # that hit API degradation wrote contamination_signals with
@@ -140,22 +140,22 @@ def migrate_passport(
             # this as a patch when a NEW field was actually added —
             # otherwise dry-run misreports + non-dry-run rewrites a
             # byte-identical passport.
-            added_any = False
+            has_new_signals = False
             for sig_key, value in signals.items():
                 if sig_key not in existing:
                     existing[sig_key] = value
                     # #511 recovery: the field is now computed, so any
                     # omission a degraded earlier run recorded is stale.
-                    cs.clear_signal_omission(entry, sig_key)
-                    added_any = True
+                    contamination_signals.clear_signal_omission(entry, sig_key)
+                    has_new_signals = True
             # #511 reason-provenance: fields STILL absent because the API
             # degraded on this run get their omission reason recorded
             # (idempotent — an already-recorded omission is not a change).
             for field in omissions:
-                if field not in existing and cs.record_signal_omission(
+                if field not in existing and contamination_signals.record_signal_omission(
                         entry, field):
-                    added_any = True
-            if not added_any:
+                    has_new_signals = True
+            if not has_new_signals:
                 report[_SKIP_ALREADY_MIGRATED] += 1
                 _log(f"{key}: skip (partial entry, no new fields computable)")
                 continue
@@ -174,15 +174,15 @@ def migrate_passport(
             # recorded so the absence stays distinguishable from "never
             # computed" (manual entries reach here with omissions == {}).
             for field in omissions:
-                cs.record_signal_omission(entry, field)
+                contamination_signals.record_signal_omission(entry, field)
             entry["contamination_signals_backfilled_at"] = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
             _log(f"{key}: patch (signals={dict(signals)})")
         report["patched"] += 1
         if entry.get("obtained_via") == "manual":
             report[_MANUAL_UNMATCHED_OMITTED] += 1
-        mutated = True
+        has_changes = True
 
-    if mutated and not dry_run:
+    if has_changes and not dry_run:
         with path.open("w", encoding="utf-8") as stream:
             yaml.dump(doc, stream)
     return report
@@ -191,7 +191,7 @@ def migrate_passport(
 def migrate_directory(
     directory: Path,
     *,
-    ss_client: cs.SemanticScholarClient,
+    semantic_scholar_client: contamination_signals.SemanticScholarClient,
     dry_run: bool,
     verbose: bool = False,
 ) -> dict[str, int]:
@@ -202,19 +202,19 @@ def migrate_directory(
     for the rest of the directory. Within a single passport, the latch
     short-circuits to protect against hammering a dead service.
     """
-    agg = {"files_processed": 0, "entries_processed": 0, "entries_patched": 0}
+    directory_summary = {"files_processed": 0, "entries_processed": 0, "entries_patched": 0}
     for path in discover_passports(directory):
-        agg["files_processed"] += 1
-        r = migrate_passport(
-            path, ss_client=ss_client, dry_run=dry_run, verbose=verbose
+        directory_summary["files_processed"] += 1
+        passport_report = migrate_passport(
+            path, semantic_scholar_client=semantic_scholar_client, dry_run=dry_run, verbose=verbose
         )
-        agg["entries_processed"] += r["processed"]
-        agg["entries_patched"] += r["patched"]
-        cs.reset_client_outage_latch(ss_client)
-    return agg
+        directory_summary["entries_processed"] += passport_report["processed"]
+        directory_summary["entries_patched"] += passport_report["patched"]
+        contamination_signals.reset_client_outage_latch(semantic_scholar_client)
+    return directory_summary
 
 
-def _build_default_ss_client() -> cs.SemanticScholarClient:
+def _build_semantic_scholar_client() -> contamination_signals.SemanticScholarClient:
     """Production SS client per deep-research/references/semantic_scholar_api_protocol.md
     (DOI-first then title-similarity, 429 → 2s backoff × 3, S2_API_KEY env
     var optional). Lazy-imported so test code (which injects a mock)
@@ -244,27 +244,27 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv or sys.argv[1:])
     try:
-        client = _build_default_ss_client()
+        client = _build_semantic_scholar_client()
     except NotImplementedError as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
     if args.path.is_dir():
-        agg = migrate_directory(
+        directory_summary = migrate_directory(
             args.path,
-            ss_client=client,
+            semantic_scholar_client=client,
             dry_run=args.dry_run,
             verbose=args.verbose,
         )
         print(
-            f"files_processed={agg['files_processed']} "
-            f"entries_processed={agg['entries_processed']} "
-            f"entries_patched={agg['entries_patched']} "
+            f"files_processed={directory_summary['files_processed']} "
+            f"entries_processed={directory_summary['entries_processed']} "
+            f"entries_patched={directory_summary['entries_patched']} "
             f"dry_run={args.dry_run}"
         )
     else:
         report = migrate_passport(
             args.path,
-            ss_client=client,
+            semantic_scholar_client=client,
             dry_run=args.dry_run,
             verbose=args.verbose,
         )

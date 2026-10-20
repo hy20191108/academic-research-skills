@@ -271,7 +271,7 @@ def _cached_verdict_detailed(
     ):
         stale_bypassed = False
         if bypass_stale:
-            threshold = _stale_advisory_days()
+            threshold = _stale_advisory_threshold_days()
             age = cache.row_age_days(citation_key, resolver_name, query_form)
             stale_bypassed = bool(
                 threshold and age is not None and age > threshold
@@ -295,13 +295,13 @@ def _cached_verdict_detailed(
     return unmatched, matched_by, queried_by, False
 
 
-def _stale_advisory_days() -> int:
+def _stale_advisory_threshold_days() -> int:
     """Lazy import of the #541 threshold (avoids a hard import cycle)."""
     try:
-        from verification_cache import stale_advisory_days
+        from verification_cache import stale_advisory_threshold_days
     except ImportError:  # pragma: no cover - dual-path import
-        from scripts.verification_cache import stale_advisory_days
-    return stale_advisory_days()
+        from scripts.verification_cache import stale_advisory_threshold_days
+    return stale_advisory_threshold_days()
 
 
 def _cached_verdict(
