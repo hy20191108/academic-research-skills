@@ -3,7 +3,7 @@
 # project-wide commitment — future versions may carry different terms.
 # See https://citation-file-format.github.io/ for the schema.
 cff-version: 1.2.0
-title: Academic Research Skills for Claude Code
+title: Academic Research Skills — concise fork
 message: >-
   If you use this software in your research, please cite it
   using the metadata from this file.
@@ -11,13 +11,11 @@ type: software
 authors:
   - family-names: Wu
     given-names: Cheng-I
-repository-code: https://github.com/Imbad0202/academic-research-skills
-url: https://github.com/Imbad0202/academic-research-skills
+repository-code: https://github.com/hy20191108/academic-research-skills
+url: https://github.com/hy20191108/academic-research-skills
 abstract: >-
-  A source-available academic research copilot framework for
-  noncommercial scholarly use. A suite of Claude Code skills that
-  assists human researchers through the full research-to-publication
-  pipeline: research, write, integrity-check, review, revise, finalize.
+  A concise fork of Cheng-I Wu's Academic Research Skills,
+  retaining research task guidance and optional literature tools.
 keywords:
   - academic-research
   - claude-code
@@ -27,9 +25,13 @@ keywords:
   - peer-review
   - scholarly-writing
 license: CC-BY-NC-4.0
-version: 3.23.1
-date-released: 2026-10-16
-# Zenodo concept DOI — represents all versions, always resolves to the latest.
-# (Per-release version DOIs are minted by Zenodo automatically; citing the
-#  concept DOI above always resolves to the latest version.)
-doi: 10.5281/zenodo.20696614
+version: 3.23.2
+date-released: 2026-10-20
+references:
+  - type: software
+    title: Academic Research Skills for Claude Code
+    authors:
+      - family-names: Wu
+        given-names: Cheng-I
+    repository-code: https://github.com/Imbad0202/academic-research-skills
+    doi: 10.5281/zenodo.20696614

@@ -325,11 +325,10 @@ def test_no_silent_defaults_then_complete_run(prepared: Path) -> None:
         assert "abstract" not in entry
 
 
-def test_quality_profile_names_models_in_cost_check(prepared: Path) -> None:
-    text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-    section = text.split("## Model Tiering", 1)[1].split("\n---", 1)[0]
-    assert "| quality | sonnet | opus | opus |" in section
-    config = json.loads(re.search(r"```json\n(.*?)\n```", section, re.S).group(1))
+def test_explicit_model_configuration_is_reported_in_cost_check(prepared: Path) -> None:
+    # Model choices are explicit configuration, not a mandatory skill preset.
+    config = {"models": {"A": "sonnet", "B": "sonnet", "ADJ": "opus",
+                         "QC": "opus", "FTA": "opus", "FTB": "opus", "FTADJ": "opus"}}
     cfg = prepared / "quality.json"
     cfg.write_text(json.dumps(dict(CONFIG, **config)), encoding="utf-8")
     out = ok(run("build_workflow.py", "ta", "--work", prepared / "work", "--protocol", PROTOCOL,

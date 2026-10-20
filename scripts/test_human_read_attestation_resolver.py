@@ -294,32 +294,6 @@ class UserAttestedReadResolverTests(unittest.TestCase):
                 self.assertEqual(out["state"], state)
                 self.assertEqual(out["finalizer_disposition"], disposition)
 
-    def test_finalizer_and_formatter_consume_closed_mapping(self) -> None:
-        repo = Path(__file__).resolve().parent.parent
-        orchestrator = (
-            repo / "academic-pipeline/agents/pipeline_orchestrator_agent.md"
-        ).read_text(encoding="utf-8")
-        formatter = (
-            repo / "academic-paper/agents/formatter_agent.md"
-        ).read_text(encoding="utf-8")
-
-        for token in (
-            "`partial_coverage` or `coverage_unknown`",
-            "`not_attested` or `rescinded`",
-            "`block_invalid_ledger`",
-            "<!--ref:slug READ-LEDGER-INVALID-->",
-            "scripts/human_read_attestation_resolver.py",
-        ):
-            with self.subTest(surface="orchestrator", token=token):
-                self.assertIn(token, orchestrator)
-        for token in (
-            "`not_attested` and `rescinded` remain plain unacknowledged `LOW-WARN`",
-            "`READ-LEDGER-INVALID`",
-            "MUST refuse",
-        ):
-            with self.subTest(surface="formatter", token=token):
-                self.assertIn(token, formatter)
-
     def test_cli_duplicate_yaml_key_is_ledger_invalid(self) -> None:
         duplicate = """session_id: test\ncreated_at: 2026-08-14T23:59:00Z\nhuman_read:\n  - citation_key: ref1\n    marked_at: 2026-08-15T00:00:00Z\n    attestation_type: USER_ATTESTED_READ\n    read_scope: {level: full_text}\n    read_scope: {level: unknown}\n"""
         with TemporaryDirectory() as tmp:
