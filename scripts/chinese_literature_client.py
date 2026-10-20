@@ -49,7 +49,7 @@ Differences from the Crossref / OpenAlex / S2 / arXiv siblings:
 
 STATUS: standalone client (#595). It is NOT wired into
 `scripts/verification_gate/`, the `resolver_outcomes` schema, the k=0..4
-triangulation matrix, or `shared/contracts/degradation_registry.json`. The
+triangulation matrix. The
 status vocabulary below deliberately mirrors `citation_verification_summary.py`
 so a future integration carries no SEMANTIC change — the schema-side deltas it
 would still need (the four-key `resolver_outcomes` lock, the `queried_by`

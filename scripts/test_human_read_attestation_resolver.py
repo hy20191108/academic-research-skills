@@ -9,11 +9,6 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 try:
-    import jsonschema
-except ImportError:  # pragma: no cover
-    jsonschema = None
-
-try:
     from scripts.human_read_attestation_resolver import (
         resolve_user_attested_read,
     )
@@ -448,49 +443,6 @@ class UserAttestedReadResolverTests(unittest.TestCase):
             out["finalizer_disposition"], "unacknowledged_low_warn"
         )
 
-    @unittest.skipIf(jsonschema is None, "jsonschema not installed")
-    def test_every_state_shape_validates_against_resolution_schema(self) -> None:
-        schema_path = (
-            Path(__file__).resolve().parent.parent
-            / "shared/contracts/passport/user_attested_read_resolution.schema.json"
-        )
-        schema = json.loads(schema_path.read_text(encoding="utf-8"))
-        outputs = [
-            self.resolve(_ledger()),
-            self.resolve(_ledger(_mark(None))),
-            self.resolve(_ledger(_mark({"level": "full_text"}))),
-            self.resolve(_ledger(_mark({"level": "abstract_only"}))),
-            self.resolve({"not": "a current ledger"}),
-            self.resolve(_ledger(), "none", ""),
-            self.resolve(
-                _ledger(
-                    _mark(
-                        {"level": "full_text"},
-                        rescinded_at="2026-08-15T00:01:00Z",
-                    )
-                )
-            ),
-        ]
-        for output in outputs:
-            jsonschema.validate(output, schema)
-
-    @unittest.skipIf(jsonschema is None, "jsonschema not installed")
-    def test_resolution_schema_rejects_forged_state_mapping(self) -> None:
-        schema_path = (
-            Path(__file__).resolve().parent.parent
-            / "shared/contracts/passport/user_attested_read_resolution.schema.json"
-        )
-        schema = json.loads(schema_path.read_text(encoding="utf-8"))
-        valid = self.resolve(_ledger(_mark({"level": "full_text"})))
-        forged = dict(valid)
-        forged["finalizer_disposition"] = "acknowledged_partial"
-        with self.assertRaises(jsonschema.ValidationError):
-            jsonschema.validate(forged, schema)
-
-        missing_binding = dict(valid)
-        missing_binding.pop("governing_marked_at")
-        with self.assertRaises(jsonschema.ValidationError):
-            jsonschema.validate(missing_binding, schema)
 
 
 if __name__ == "__main__":

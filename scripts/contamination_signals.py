@@ -15,10 +15,7 @@ exception), the caller additionally records the omission on the entry as
 `contamination_signal_omissions: {<field>: "api_degraded"}` so a degraded
 lookup stays distinguishable from "never computed". Derivable omissions are
 NOT recorded (manual exemption ← obtained_via='manual'; arXiv skip ← absent
-arxiv_id). Schema + mutual-exclusion rules:
-shared/contracts/passport/literature_corpus_entry.schema.json; registry row
-`contamination_signal_api_degradation` in
-shared/contracts/degradation_registry.json.
+arxiv_id).
 """
 from __future__ import annotations
 

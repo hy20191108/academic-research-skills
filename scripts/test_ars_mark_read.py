@@ -27,6 +27,7 @@ from unittest.mock import patch
 import yaml
 
 from scripts import ars_mark_read
+from scripts.human_read_attestation_resolver import LedgerValidationError, _validated_rows
 
 
 SCRIPT = Path(__file__).parent / "ars_mark_read.py"
@@ -560,20 +561,7 @@ class TestReadScopeAttestation(unittest.TestCase):
             self.assertEqual(len(entry["read_scope"]["locators"][0]), 200)
             self.assertEqual(len(entry["read_scope"]["note"]), 1000)
 
-    def test_schema_rejects_locators_on_non_sections_level(self):
-        # codex #513 r2: the sidecar schema mirrors the CLI's locators-require-
-        # sections rule so audit-time validation matches the writer contract.
-        import json
-
-        try:
-            import jsonschema
-        except ImportError:
-            self.skipTest("jsonschema not installed")
-        schema_path = (
-            Path(SCRIPT).resolve().parent.parent
-            / "shared" / "contracts" / "passport" / "human_read_log.schema.json"
-        )
-        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    def test_reader_rejects_locators_on_non_sections_level(self):
         bad = {
             "session_id": "s", "created_at": "2026-07-20T00:00:00Z",
             "human_read": [{
@@ -582,24 +570,13 @@ class TestReadScopeAttestation(unittest.TestCase):
                 "read_scope": {"level": "full_text", "locators": ["pp. 1-2"]},
             }],
         }
-        with self.assertRaises(jsonschema.ValidationError):
-            jsonschema.validate(bad, schema)
+        with self.assertRaises(LedgerValidationError):
+            _validated_rows(bad)
         bad["human_read"][0]["read_scope"] = {"level": "sections", "locators": ["pp. 1-2"]}
-        jsonschema.validate(bad, schema)  # sections+locators stays valid
+        _validated_rows(bad)  # sections+locators stays valid
 
-    def test_schema_requires_current_type_scope_pair_and_utc_z(self):
+    def test_reader_requires_current_type_scope_pair_and_utc_z(self):
         import copy
-        import json
-
-        try:
-            import jsonschema
-        except ImportError:
-            self.skipTest("jsonschema not installed")
-        schema_path = (
-            Path(SCRIPT).resolve().parent.parent
-            / "shared" / "contracts" / "passport" / "human_read_log.schema.json"
-        )
-        schema = json.loads(schema_path.read_text(encoding="utf-8"))
         valid = {
             "session_id": "s",
             "created_at": "2026-07-20T00:00:00Z",
@@ -612,7 +589,7 @@ class TestReadScopeAttestation(unittest.TestCase):
                 }
             ],
         }
-        jsonschema.validate(valid, schema)
+        _validated_rows(valid)
         for mutate in ("missing_type", "missing_scope", "naive_mark", "offset_mark"):
             with self.subTest(mutate=mutate):
                 bad = copy.deepcopy(valid)
@@ -625,21 +602,10 @@ class TestReadScopeAttestation(unittest.TestCase):
                     row["marked_at"] = "2026-07-20T00:00:00"
                 else:
                     row["marked_at"] = "2026-07-20T00:00:00+00:00"
-                with self.assertRaises(jsonschema.ValidationError):
-                    jsonschema.validate(bad, schema)
+                with self.assertRaises(LedgerValidationError):
+                    _validated_rows(bad)
 
-    def test_ledger_validates_against_sidecar_schema(self):
-        import json
-
-        try:
-            import jsonschema
-        except ImportError:
-            self.skipTest("jsonschema not installed")
-        schema_path = (
-            Path(SCRIPT).resolve().parent.parent
-            / "shared" / "contracts" / "passport" / "human_read_log.schema.json"
-        )
-        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    def test_written_ledger_is_accepted_by_reader(self):
         with TemporaryDirectory() as tmp:
             passport, result = self._mark(
                 tmp, "--scope", "sections", "--locator", "pp. 1-9",
@@ -647,7 +613,7 @@ class TestReadScopeAttestation(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             _run_mark_read("smith2024", "--passport-path", str(passport), "--unmark")
-            jsonschema.validate(_read_log(passport), schema)
+            _validated_rows(_read_log(passport))
 
 
 class TestExistingLedgerFailClosed(unittest.TestCase):

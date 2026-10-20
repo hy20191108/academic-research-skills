@@ -5,7 +5,7 @@ requires-python = ">=3.11"
 dependencies = ["pyyaml", "ruamel.yaml>=0.17", "defusedxml"]
 
 [dependency-groups]
-dev = ["pytest", "jsonschema[format]", "openpyxl>=3.1"]
+dev = ["pytest", "openpyxl>=3.1"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

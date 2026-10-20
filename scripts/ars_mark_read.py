@@ -31,7 +31,7 @@ Behavior summary:
   declaration, not proof of reading or comprehension.
   Attestation args are rejected with `--unmark` (rescinding takes no
   attestation). One invocation's attestation applies to every key in the
-  batch. Sidecar schema: shared/contracts/passport/human_read_log.schema.json.
+  batch.
 """
 from __future__ import annotations
 
@@ -69,11 +69,7 @@ except ModuleNotFoundError:  # direct ``python scripts/ars_mark_read.py`` use
 
 ERR_PREFIX = "[ARS-MARK-READ ERROR:"
 
-# #513 closed level enum + text bounds — keep in lockstep with
-# shared/contracts/passport/human_read_log.schema.json (level enum; locators
-# items minLength 1 / maxLength 200; note minLength 1 / maxLength 1000). The
-# CLI enforces the bounds at write time so it can never produce a ledger the
-# committed schema rejects (codex #513 r1 P1).
+# Scope and text bounds are enforced before writing.
 READ_SCOPE_LEVELS = ("full_text", "sections", "abstract_only", "toc_only", "unknown")
 LOCATOR_MAX_LEN = 200
 NOTE_MAX_LEN = 1000

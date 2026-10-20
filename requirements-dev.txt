@@ -2,5 +2,4 @@ pyyaml
 ruamel.yaml>=0.17
 defusedxml
 pytest
-jsonschema[format]
 openpyxl>=3.1

@@ -57,7 +57,7 @@ def yq(v):
 
 
 def write_corpus(path, rows, stage, when):
-    """ARS literature_corpus[] entries (shared/contracts/passport/literature_corpus_entry.schema.json)."""
+    """ARS literature_corpus[] entries."""
     ok, rejected = [], []
     for r in rows:
         u = r["u"]
@@ -87,7 +87,7 @@ def write_corpus(path, rows, stage, when):
                              f"[decided by {r['f']['by']}]")]
         ok.append(e)
     with open(path, "w", encoding="utf-8", newline="\n") as f:
-        f.write("# literature_corpus[] entries for Academic Research Skills (literature_corpus_entry.schema.json).\n")
+        f.write("# literature_corpus[] entries for Academic Research Skills.\n")
         f.write(f"# Produced by {srlib.TOOL} {srlib.VERSION}. Paste under `literature_corpus:` in a Material Passport,\n")
         f.write("# or give the file to academic-paper / deep-research as your curated corpus.\n")
         if not ok:
