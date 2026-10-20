@@ -46,7 +46,7 @@ test("real Pi runner handles structured prompts, legacy options and earlier over
         const runner = new ExtensionRunner(loaded.extensions, loaded.runtime, tempRoot, {}, {});
         const errors = [];
         runner.onError((error) => errors.push(error));
-        const names = ["deep-research", "academic-paper", "academic-paper-reviewer", "academic-pipeline"];
+        const names = ["deep-research", "academic-paper", "academic-paper-reviewer", "academic-pipeline", "sr-screener"];
         const options = {
           cwd: tempRoot,
           skills: [
@@ -82,7 +82,7 @@ test("real Pi runner handles structured prompts, legacy options and earlier over
         assert.equal(prompt.includes("## Academic Research Skills compatibility for Pi"), active);
         if (buildSystemPromptSections && !override) {
           assert.equal(result.systemPromptOptions.forceSystemPrompt, undefined);
-          assert.equal(result.systemPromptOptions.skills.length, active ? 5 : 1);
+          assert.equal(result.systemPromptOptions.skills.length, active ? names.length + 1 : 1);
           const sections = buildSystemPromptSections(result.systemPromptOptions);
           assert.match(sections.mcp_servers, /MCP sentinel/);
           assert.match(sections.later_extension, /Sentinel from a later extension/);

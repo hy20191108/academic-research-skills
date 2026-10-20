@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const commandPattern = /^\/(ars-[a-z0-9-]+)(?:\s+([\s\S]*))?$/;
-const skillNames = ["deep-research", "academic-paper", "academic-paper-reviewer", "academic-pipeline"];
+const skillNames = ["deep-research", "academic-paper", "academic-paper-reviewer", "academic-pipeline", "sr-screener"];
 const skillPattern = new RegExp(`^/skill:(${skillNames.join("|")})(?:\\s|$)`);
 const stateEntryType = "ars-pi-state";
 const orchestrationPattern = /subagent|workflow|parallel[-_ ]agent|multi[-_ ]agent/i;
@@ -40,7 +40,7 @@ const skillLocations = new Set(
     .filter((location) => location !== undefined),
 );
 
-// Upstream SKILL.md files stay unmodified, so hide their exact Pi listings while ARS is inactive.
+// Hide this package’s exact skill listings while ARS is inactive.
 function hideArsSkills(systemPrompt) {
   if (Array.isArray(systemPrompt)) return systemPrompt.map(hideArsSkills);
   return systemPrompt.replace(
@@ -66,14 +66,13 @@ async function probe(pi, command, args) {
 const compatibility = `
 ## Academic Research Skills compatibility for Pi
 
-Apply this section only while using an Academic Research Skills (ARS) skill or an \`/ars-*\` prompt.
-
-- The original Claude Code ARS files are the source of truth. Do not replace their research, writing, review, integrity, or checkpoint rules.
-- Resolve repository-relative ARS paths such as \`shared/\`, \`scripts/\`, \`commands/\`, \`deep-research/\`, \`academic-paper/\`, \`academic-paper-reviewer/\`, and \`academic-pipeline/\` from \`${repoRoot}\`.
-- Treat Claude Code tool names as capability names. Use the equivalent tools available in the current Pi session.
-- When ARS requests multiple agents, first inspect the available Pi tools and installed skills for a subagent, workflow, or parallel-agent capability; if none is obvious, search the configured Pi skill locations. Use a matching capability when available. Otherwise run the roles sequentially in the current agent and disclose that degraded execution mode. Do not require a specific orchestration add-on.
-- When ARS requests \`WebSearch\`, \`WebFetch\`, or \`/websearch\`, first inspect the available tools and installed skills for web search or page retrieval; if none is obvious, search the configured Pi skill locations. Prefer an installed web-search skill when available. Otherwise use a permitted HTTP or bibliographic-API capability. If none exists, report the limitation and do not claim that a source was verified.
-- Ask questions through normal conversation or any available user-question tool. Ignore Claude-only command \`model\` metadata and inherit the current Pi model.
+Apply only while an ARS skill or /ars-* prompt is active.
+Read the selected SKILL.md; resolve its resources from ${repoRoot}.
+Use the current session's equivalent tools and model.
+Supporting files are optional; do not reinstate the upstream fixed workflow.
+Delegate only when requested and supported; shared context is not independent review.
+Use available search tools when needed; disclose unavailable or unverified sources.
+Claude hooks do not run in Pi. Do not claim their write-scope guard is active.
 `;
 
 export default function (pi) {

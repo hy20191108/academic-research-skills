@@ -1,11 +1,10 @@
 ---
-disable-model-invocation: true
 name: ars-revision-coach
-description: ARS academic-paper `revision-coach` — peer-review roadmap or source-accounted real-committee response skeleton
+description: 論文の修正方針を相談する
+disable-model-invocation: true
 ---
 
 Trigger the `academic-paper` skill in `revision-coach` mode.
-
 Invoke `academic-research-skills:academic-paper` with `revision-coach $ARGUMENTS`.
-Resolve its SKILL.md from the plugin root and follow that skill.
-Mode names select the task, not a fixed sequence of stages.
+Read its SKILL.md from the plugin root and perform the requested task.
+Mode names select the task; they do not require the former stage sequence.

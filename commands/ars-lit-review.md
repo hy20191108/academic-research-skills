@@ -1,11 +1,10 @@
 ---
-disable-model-invocation: true
 name: ars-lit-review
-description: ARS academic-paper `lit-review` mode — annotated bibliography in paper format
+description: 文献レビューを執筆する
+disable-model-invocation: true
 ---
 
 Trigger the `academic-paper` skill in `lit-review` mode.
-
 Invoke `academic-research-skills:academic-paper` with `lit-review $ARGUMENTS`.
-Resolve its SKILL.md from the plugin root and follow that skill.
-Mode names select the task, not a fixed sequence of stages.
+Read its SKILL.md from the plugin root and perform the requested task.
+Mode names select the task; they do not require the former stage sequence.

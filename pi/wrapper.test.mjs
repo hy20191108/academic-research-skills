@@ -8,7 +8,7 @@ import wrapper from "./wrapper.js";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const compatibilityMarker = "## Academic Research Skills compatibility for Pi";
-const arsSkillNames = ["deep-research", "academic-paper", "academic-paper-reviewer", "academic-pipeline"];
+const arsSkillNames = ["deep-research", "academic-paper", "academic-paper-reviewer", "academic-pipeline", "sr-screener"];
 const arsSkillLocations = arsSkillNames.map((name) => resolve(repoRoot, name, "SKILL.md"));
 const externalSkillLocation = "/example/external/deep-research/SKILL.md";
 const escapeXml = (text) => text
@@ -257,7 +257,7 @@ test("structured inactive prompts filter package skills and preserve extension s
   runStructuredBeforeAgentStart(createHarness(), options);
 
   assert.deepEqual(options.skills, [{ name: "deep-research", filePath: externalSkillLocation }]);
-  assert.equal(originalSkills.length, 5);
+  assert.equal(originalSkills.length, 6);
   assert.equal(options.sections, sections);
   assert.equal(options.sections.mcp_servers, "Keep the MCP server instructions.");
   assert.equal(options.sections.ars_compatibility, undefined);
@@ -368,3 +368,9 @@ for (const active of [false, true]) {
     }
   });
 }
+
+test("direct screening requests activate the fifth skill", () => {
+  const harness = createHarness();
+  harness.handlers.get("input")({ text: "/skill:sr-screener screen these records" });
+  assert.equal(runBeforeAgentStart(harness).includes(compatibilityMarker), true);
+});

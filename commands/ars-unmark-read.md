@@ -1,16 +1,15 @@
 ---
 name: ars-unmark-read
-description: ARS /ars-unmark-read — rescind a user-attested reading signal for one or more citation keys
-model: sonnet
+description: 文献の既読申告を取り消す
+disable-model-invocation: true
 ---
 
-Rescind a previously recorded `USER_ATTESTED_READ` declaration for the named citation key(s). Per v3.6.8 spec §3.6 firm rule 3, the session-scoped peer file `<passport-stem>_human_read_log.yaml` is append-only: rescind writes a `rescinded_at: <ISO 8601>` field on the matching entry rather than deleting it, so audit replay can reconstruct the user's signal trajectory. The next finalizer pass will demote any coverage-dependent `<!--ref:slug ok-->` back to `<!--ref:slug LOW-WARN-->` for each rescinded slug.
+本人が指定した文献の既読申告を取り消す．
+--passport-pathで対象ファイルを指定する．
+記録は削除せず取消日時を残す．
 
-The dispatching agent substitutes `<path>` below with the active Material Passport path from session context before executing (the quoting is preserved so paths containing spaces remain a single argument). The CLI requires the citation_key to exist in `literature_corpus[]` AND to have an unrescinded prior mark in the read-log; hard-fails otherwise with the canonical `[ARS-MARK-READ ERROR: ...]` message.
-
-Implementation:
-```bash
-python3 scripts/ars_mark_read.py $ARGUMENTS --passport-path "<path>" --unmark
+```sh
+python3 scripts/ars_mark_read.py $ARGUMENTS --unmark
 ```
 
-Mode reference: `docs/design/2026-04-30-ars-v3.6.8-trust-provenance-and-drift-transparency-spec.md` §3.6 + Step 7.
+scripts/はプラグインのルートから解決する．

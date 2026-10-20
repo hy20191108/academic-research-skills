@@ -1,11 +1,10 @@
 ---
-disable-model-invocation: true
 name: ars-plan
-description: ARS academic-paper `plan` mode — Socratic chapter-by-chapter planning
+description: 論文の執筆を計画する
+disable-model-invocation: true
 ---
 
 Trigger the `academic-paper` skill in `plan` mode.
-
 Invoke `academic-research-skills:academic-paper` with `plan $ARGUMENTS`.
-Resolve its SKILL.md from the plugin root and follow that skill.
-Mode names select the task, not a fixed sequence of stages.
+Read its SKILL.md from the plugin root and perform the requested task.
+Mode names select the task; they do not require the former stage sequence.

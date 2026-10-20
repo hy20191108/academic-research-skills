@@ -1,8 +1,8 @@
 {
   "name": "academic-research-skills",
   "owner": {
-    "name": "Cheng-I Wu",
-    "url": "https://github.com/Imbad0202"
+    "name": "hy20191108",
+    "url": "https://github.com/hy20191108"
   },
   "description": "研究の調査・執筆・査読・文献選定のための短い指針",
   "plugins": [
@@ -10,7 +10,7 @@
       "name": "academic-research-skills",
       "source": "./",
       "description": "研究の調査・執筆・査読・文献選定のための短い指針",
-      "version": "3.23.1",
+      "version": "3.23.2",
       "license": "CC-BY-NC-4.0",
       "skills": [
         "./academic-paper",

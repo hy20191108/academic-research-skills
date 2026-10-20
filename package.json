@@ -15,7 +15,8 @@
       "./deep-research",
       "./academic-paper",
       "./academic-paper-reviewer",
-      "./academic-pipeline"
+      "./academic-pipeline",
+      "./sr-screener"
     ],
     "prompts": [
       "./commands"
