@@ -17,6 +17,8 @@
 原著はCheng-I Wuの[Academic Research Skills][upstream]．
 本派生版では指示・構成・補助処理を変更した．
 [CC BY-NC 4.0](LICENSE)と[原著者の声明](NOTICE.md)に従う．
-由来は[UPSTREAM](UPSTREAM.md)に記録する．
+簡素化前の資産は[上流の基点][base]を参照する．
+本派生版への原著者の支持やレビューを意味しない．
 
 [upstream]: https://github.com/Imbad0202/academic-research-skills
+[base]: https://github.com/Imbad0202/academic-research-skills/tree/cfd081d8f309ec65254d9f9f04c845ee78b1ec1d

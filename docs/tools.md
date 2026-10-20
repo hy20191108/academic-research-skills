@@ -1,21 +1,18 @@
 # 補助ツール
 
-文献クライアントはscripts/の各*_client.pyにある．
-検索結果の取得と研究の主張の検証は別に行う．
-各APIの利用条件と認証は実行前に確認する．
+| 仕事 | 実行するファイル |
+| --- | --- |
+| 文献を検索する | scripts/の各*_client.py |
+| 既読申告を記録・取消する | scripts/ars_mark_read.py（取消は--unmark） |
+| 指定文献の検証キャッシュを削除する | scripts/ars_cache_invalidate.py |
+
+既読申告は読解の証拠ではない．取消時も元の記録を残す．
+キャッシュ削除だけでは再検証にならない．
 
 文献選定はskills/sr-screener/scripts/を使う．
-prepare_records.pyで入力を整理する．
-build_workflow.pyで担当への依頼を生成する．
-merge_decisions.pyで判断を集める．
-prepare_fulltext.pyで本文確認の対象を準備する．
-build_outputs.pyで選定結果を出力する．
-引数は各スクリプトの--helpで確認する．
-設定例はskills/sr-screener/templates/にある．
-元の複数担当方式を使う時だけ明示的に実行する．
-例の担当モデル名は実際に利用できるものに置き換える．
-
-既読記録はars_mark_read.py，取消は--unmarkを使う．
-申告は読解の証拠ではなく，元の記録を残して取り消す．
-ars_cache_invalidate.pyは指定文献のキャッシュを削除する．
-入力の条件は各ツールの--helpで確認する．
+prepare_records.py → build_workflow.py → merge_decisions.pyで入力，依頼生成，判断集約を行う．
+本文確認はprepare_fulltext.py，結果出力はbuild_outputs.pyを使う．
+設定例は同スキルのtemplates/にある．
+複数担当の生成は依頼がある時だけ行い，モデル名は利用環境に合わせる．
+引数は各ファイルの--help，APIの利用条件と認証は実行前に確認する．
+検索結果の取得と主張の検証は区別する．

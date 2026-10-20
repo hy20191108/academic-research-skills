@@ -18,7 +18,6 @@ academic-research-skillsはCheng-I Wu（Imbad0202）の個人プロジェクト�
 - 雇用主の指示や資源による開発ではない．
 - 見解とコードは原著者個人のものであり，雇用主のものではない．
 
-## 運営とライセンス
+## ライセンス
 
-意思決定，モデル間レビューの役割と限界，保守終了時の方針については[GOVERNANCE.md](GOVERNANCE.md)を参照する．
 ライセンス条件は[LICENSE](LICENSE)を参照する．

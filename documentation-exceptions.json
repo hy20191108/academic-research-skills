@@ -1,12 +1,4 @@
 {
-  "NOTICE.md": {
-    "reason": "原著者の声明の日本語訳を保持する．",
-    "sha256": "eb0539cd8d64246a6e1b40029ad995308625e0eb5310865d805db5214486a4e6"
-  },
-  "THIRD_PARTY.md": {
-    "reason": "第三者の帰属・免責・掲載条件を省略せず日本語で保持する．",
-    "sha256": "4f5a41080b27b6a84e5af817295bfa17511e019f2dea99655d2481a042b12e0d"
-  },
   "scripts/fixtures/transport_bodies/chinese_literature/README.md": {
     "reason": "合成応答の作成条件と証拠の限界を日本語で保持する．",
     "sha256": "8041ca9e64a17812540edb8cb2bcebe00eb61c698e54bb9994c6b1636178a3f5"
