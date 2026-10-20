@@ -20,5 +20,5 @@ test("標準のスキル読込みで全登録を自動選択の対象にする",
     assert.equal(result.skills[0].disableModelInvocation, false);
     names.push(result.skills[0].name);
   }
-  assert.equal(new Set(names).size, 8);
+  assert.equal(new Set(names).size, 5);
 });

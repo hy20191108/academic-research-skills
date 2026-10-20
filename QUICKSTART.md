@@ -21,4 +21,5 @@ uv run --locked pytest -q
 node --test tests/pi-skills.test.mjs
 ```
 
-ネットワークを使う文献検索は利用環境の権限に従う．
+Piの実機試験にはPI_CODING_AGENT_ROOTで所在を指定する．
+分量の例外はdocumentation-exceptions.jsonに理由を残す．

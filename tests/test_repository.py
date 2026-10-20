@@ -1,7 +1,6 @@
 """Check that documentation audits catch omissions outside SKILL.md."""
 import json
 import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -51,17 +50,9 @@ def test_repository_conforms():
     assert inspect(ROOT)["errors"] == []
 
 
-def test_session_start_announces_all_tasks_without_loading_legacy_prompts():
-    result = subprocess.run(
-        ["bash", str(ROOT / "scripts/announce-ars-loaded.sh")],
-        input="{}", text=True, capture_output=True, check=True, cwd=ROOT,
-    )
-    output = json.loads(result.stdout)["hookSpecificOutput"]
-    assert output["hookEventName"] == "SessionStart"
-    context = output["additionalContext"]
-    assert len(context) <= 1200
-    for name in inspect(ROOT)["skills"]:
-        assert name in context
+def test_no_startup_prompt_is_injected():
+    config = json.loads((ROOT / "hooks/hooks.json").read_text())
+    assert "SessionStart" not in config["hooks"]
 
 
 def test_plugin_keeps_the_write_guard_wired():
@@ -81,4 +72,7 @@ def test_only_skills_are_registered():
         assert set(config["pi"]) == {"skills"}
     assert not (ROOT / "skills").exists()
     assert not (ROOT / "pi").exists()
-    assert {"record-reading", "invalidate-citation-cache", "check-research-environment"} <= set(inspect(ROOT)["skills"])
+    assert set(inspect(ROOT)["skills"]) == {
+        "deep-research", "academic-paper", "academic-paper-reviewer",
+        "academic-pipeline", "sr-screener",
+    }

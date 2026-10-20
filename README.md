@@ -1,25 +1,22 @@
 # 研究スキル
 
-研究の仕事ごとに短い指針を持つスキル集．
+研究の判断を，仕事ごとの短い指針にまとめる．
+問いに必要なスキルだけを使う．
 
-| スキル | 仕事 |
+| 依頼 | スキル |
 | --- | --- |
-| [deep-research](deep-research/SKILL.md) | 問いと文献を調べる |
-| [academic-paper](academic-paper/SKILL.md) | 論文を執筆する |
-| [academic-paper-reviewer](academic-paper-reviewer/SKILL.md) | 論文を査読する |
-| [academic-pipeline](academic-pipeline/SKILL.md) | 研究から論文まで進める |
-| [sr-screener](sr-screener/SKILL.md) | レビュー対象を選ぶ |
-| [record-reading](record-reading/SKILL.md) | 文献の既読申告を管理する |
-| [invalidate-citation-cache](invalidate-citation-cache/SKILL.md) | 文献の検証キャッシュを消す |
-| [check-research-environment](check-research-environment/SKILL.md) | 研究ツールの利用可否を調べる |
+| 問いと文献を調べる | [deep-research](deep-research/SKILL.md) |
+| 論文を執筆・改稿する | [academic-paper](academic-paper/SKILL.md) |
+| 原稿を査読する | [academic-paper-reviewer](academic-paper-reviewer/SKILL.md) |
+| 研究から論文まで進める | [academic-pipeline](academic-pipeline/SKILL.md) |
+| 文献群から対象を選ぶ | [sr-screener](sr-screener/SKILL.md) |
 
-[導入](QUICKSTART.md)を参照し，仕事を自然文で依頼する．
-[補助ツール](docs/tools.md)は必要時だけ使う．
-[変更理由](docs/changes.md)と[確認範囲](docs/validation.md)を残す．
+[導入](QUICKSTART.md)後，仕事を自然文で依頼する．
+形式変換や集計が必要なら[補助ツール](docs/tools.md)を使う．
 
 原著はCheng-I Wuの[Academic Research Skills][upstream]．
 本派生版では指示・構成・補助処理を変更した．
-[CC BY-NC 4.0](LICENSE)と[原著者の声明](NOTICE.md)を保持する．
-元の資産は[上流コミット](UPSTREAM.md)から取得できる．
+[CC BY-NC 4.0](LICENSE)と[原著者の声明](NOTICE.md)に従う．
+由来は[UPSTREAM](UPSTREAM.md)に記録する．
 
 [upstream]: https://github.com/Imbad0202/academic-research-skills
