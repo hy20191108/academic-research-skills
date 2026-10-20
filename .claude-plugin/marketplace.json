@@ -4,12 +4,12 @@
     "name": "Cheng-I Wu",
     "url": "https://github.com/Imbad0202"
   },
-  "description": "Academic Research Skills — contract-audited research, writing, peer review, and pipeline orchestration for Claude Code.",
+  "description": "研究の調査・執筆・査読・文献選定のための短い指針",
   "plugins": [
     {
       "name": "academic-research-skills",
       "source": "./",
-      "description": "5 skills + 35 modes + Material Passport pipeline. Includes v3.6.7 cross-model audit gate and v3.6.8 generator-evaluator contract.",
+      "description": "研究の調査・執筆・査読・文献選定のための短い指針",
       "version": "3.23.1",
       "license": "CC-BY-NC-4.0",
       "skills": [
