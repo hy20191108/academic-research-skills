@@ -1,51 +1,47 @@
-# Screening protocol: title/abstract stage
+# 文献選定の計画：タイトル・抄録の段階
 
-> Illustrative example for sr-screener. The review is fictional; adapt the structure, not the content.
+> sr-screener用の架空のレビュー例．内容ではなく構成を参考にする．
 
-Version 1.0, confirmed by the review team on 2026-09-01. Source: review proposal, section 3.
+版1.0．レビュー担当者が2026-09-01に確認．出典：レビュー提案書第3節．
 
-Review (diagnostic test accuracy): "Urinary neutrophil gelatinase-associated lipocalin (NGAL) for the early diagnosis of acute kidney injury after paediatric cardiac surgery".
-Question: how accurately does urinary NGAL measured within 24 hours of cardiac surgery identify children who develop acute kidney injury (AKI)?
+診断精度レビュー：「小児心臓手術後の急性腎障害の早期診断における尿中好中球ゼラチナーゼ関連リポカリン（NGAL）」．
+問い：心臓手術後24時間以内に測定した尿中NGALは，急性腎障害（AKI）を発症する小児をどの程度正確に識別できるか．
 
-## Eligibility (full protocol)
+## 適格基準
 
-- Population: children and adolescents (under 18 years, including neonates and infants) undergoing cardiac surgery, with or without cardiopulmonary bypass.
-- Index test: urinary NGAL (any assay, any threshold) measured within 24 hours after surgery.
-- Target condition: AKI defined by a recognised creatinine- or urine-output-based definition (KDIGO, AKIN, pRIFLE or a study-specific creatinine rise).
-- Design: primary diagnostic accuracy studies, cohort or case-control, prospective or retrospective.
-- Full-text-only criteria (reference-standard definition details, timing of AKI assessment, availability of 2x2 data or sensitivity/specificity) must NOT be used to exclude at this title/abstract stage.
+- 対象：心臓手術を受ける18歳未満の小児・青少年．新生児と乳児を含み，人工心肺の有無は問わない．
+- 検査：術後24時間以内に測定した尿中NGAL．測定法と閾値は問わない．
+- 対象疾患：クレアチニンまたは尿量に基づく定義（KDIGO，AKIN，pRIFLE，研究独自のクレアチニン上昇）によるAKI．
+- 研究：一次的な診断精度研究．コホート・症例対照，前向き・後ろ向きを含む．
+- 参照基準の詳細，AKI評価の時点，2×2表や感度・特異度の有無など，本文でしか確認できない条件でこの段階の除外を決めない．
 
-## "Urinary NGAL" (interpret broadly at screening)
+## 尿中NGALの扱い
 
-Counts: urinary NGAL, uNGAL, lipocalin-2 in urine, NGAL in urine normalised to creatinine, panels that include urinary NGAL.
-Does not count on its own: plasma or serum NGAL only, other urinary markers only (KIM-1, IL-18, L-FABP, TIMP-2 x IGFBP7), serum creatinine or cystatin C only.
-Exception, treat as unclear: "NGAL" without the specimen stated; "biomarker panel" in paediatric cardiac surgery without the markers named.
+尿中NGAL，uNGAL，尿中lipocalin-2，尿中クレアチニンで補正したNGAL，尿中NGALを含む検査パネルを含める．
+血漿・血清NGALのみ，他の尿中指標のみ（KIM-1，IL-18，L-FABP，TIMP-2 × IGFBP7），血清クレアチニン・シスタチンCのみは含めない．
+検体が不明な「NGAL」，または小児心臓手術の「バイオマーカーパネル」で指標が不明ならunclearとする．
 
-## Decisions
+## 判定
 
-- "include" (code INC): children undergoing cardiac surgery, urinary NGAL measured after surgery, and AKI as the outcome. Accuracy statistics do NOT need to be in the abstract.
-- "unclear" (code UNC): plausibly eligible but the title/abstract is insufficient, for example:
-  (a) NGAL measured after paediatric cardiac surgery with the specimen not stated;
-  (b) mixed adult and paediatric cohort where children may be reported separately;
-  (c) no abstract, but the title suggests NGAL or kidney biomarkers after paediatric cardiac surgery;
-  (d) AKI biomarkers after paediatric cardiac surgery with the markers not named.
-- "exclude": give ONE code, the first criterion that clearly fails, checked in this order:
-  - E1 publication type: review of any kind, editorial, letter without data, comment, reply, erratum, protocol, trial registration, conference abstract, book chapter, case report.
-  - E2 not human: animal models, in vitro studies.
-  - E3 population: adults only, children without cardiac surgery (for example sepsis, contrast exposure, non-cardiac surgery).
-  - E4 index test: urinary NGAL not measured (only plasma/serum NGAL, only other markers).
-  - E5 target condition: outcome other than AKI (for example mortality or length of stay only) with no AKI assessment.
-  - E9 other reason (explain).
+- include（INC）：小児心臓手術，術後の尿中NGAL測定，AKIの転帰が揃う．抄録に精度の統計量は必要ない．
+- unclear（UNC）：適格の可能性はあるが，タイトル・抄録では不十分．例：小児心臓手術後のNGALで検体不明，成人・小児混合集団で小児を別に報告する可能性がある，抄録がなく題名だけが術後NGAL・腎指標を示す，術後AKIの指標名が不明．
+- exclude：次の順に確認し，最初に明確に満たさない基準のコードを一つだけ付ける．
+  - E1 文献種別：全種類のレビュー，社説，データのないレター，コメント，返信，訂正，計画書，試験登録，学会抄録，書籍の章，症例報告．
+  - E2 ヒト以外：動物モデル，in vitro研究．
+  - E3 集団：成人のみ，心臓手術を受けない小児（敗血症，造影剤曝露，非心臓手術など）．
+  - E4 検査：尿中NGALを測定していない（血漿・血清NGALのみ，他の指標のみ）．
+  - E5 疾患：AKIを評価せず，死亡や入院期間など他の転帰のみを扱う．
+  - E9 その他：理由を記す．
 
-## Principles
+## 判断の原則
 
-- Sensitive: missing an eligible study is worse than sending an extra one to full text. When genuinely in doubt, choose "unclear".
-- Decisive: most records are clearly irrelevant and must be excluded. "unclear" is only for records that plausibly meet BOTH the paediatric cardiac surgery population AND the urinary NGAL criteria.
-- Judge content only; non-English articles with an English abstract are screened normally.
-- Use the publication type in each record header to help apply E1.
+- 適格研究の見落としを避けるため，判断に迷う場合はunclearとする．
+- 明らかに無関係な文献は除外する．unclearは小児心臓手術と尿中NGALの両方に該当する可能性がある場合に限る．
+- 内容だけで判断する．英語抄録のある非英語論文も通常どおり選定する．
+- E1の判定では各レコードの見出しにある文献種別を参照する．
 
-## Amendment log
+## 変更履歴
 
-| Date | Change | Reason | Records to re-screen |
-|------|--------|--------|----------------------|
-| 2026-09-05 | Added "lipocalin-2 in urine" to Counts | pilot conflict on two records using that term | pilot batches b003, b041 |
+| 日付 | 変更 | 理由 | 再選定する対象 |
+| --- | --- | --- | --- |
+| 2026-09-05 | 尿中lipocalin-2を対象に追加 | この用語を使う2件で試行時に判定が分かれた | 試行バッチb003，b041 |

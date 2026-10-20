@@ -1,22 +1,22 @@
 {
   "NOTICE.md": {
-    "reason": "原著者の声明を改変しないため，26行を保持する．",
-    "sha256": "4f8eb1306c01b419baeff7f66d96ea3bd46076436406954c7eff21fb2e0003f1"
+    "reason": "原著者の声明の日本語訳を保持する．",
+    "sha256": "eb0539cd8d64246a6e1b40029ad995308625e0eb5310865d805db5214486a4e6"
   },
   "THIRD_PARTY.md": {
-    "reason": "第三者への帰属表示を保つため，原文を保持する．",
-    "sha256": "ccfb19e8636c63fea505c99ccbd39a386ec2a6a57633cb95dbd9af20afc5d6d6"
+    "reason": "第三者の帰属・免責・掲載条件を省略せず日本語で保持する．",
+    "sha256": "4f5a41080b27b6a84e5af817295bfa17511e019f2dea99655d2481a042b12e0d"
   },
   "scripts/fixtures/transport_bodies/chinese_literature/README.md": {
-    "reason": "合成API応答の作成条件と証拠の限界を保つ．実行指示ではない．",
-    "sha256": "28a919401a3dcd8716d37cb66abb1e80316ab92157ea45b9fe7a58a488a07c33"
+    "reason": "合成応答の作成条件と証拠の限界を日本語で保持する．",
+    "sha256": "8041ca9e64a17812540edb8cb2bcebe00eb61c698e54bb9994c6b1636178a3f5"
   },
   "skills/sr-screener/examples/example_protocol_dta.md": {
-    "reason": "選定ツールの回帰試験で使う固定プロトコルのため，原文を保持する．",
-    "sha256": "cf2c91c821aa65d1e55e8ac4bc64fff9bb5b290183f823c4d0e8e9701d9d4f77"
+    "reason": "試験用の架空の選定計画を，条件を変えず日本語で保持する．",
+    "sha256": "8243bf7b5132393a751fef212e73fedd926bc8af55e9bdb085764f8d8d9d3254"
   },
   "skills/sr-screener/templates/prompts.md": {
-    "reason": "10種類の生成依頼と判断条件・JSON契約を保つ．使う依頼だけを生成する．",
-    "sha256": "6b8258314e3972a4bc06504b3163faf346312b8a12175816efa4289a76d13f6d"
+    "reason": "10種類の指示を日本語化し，変数・判定条件・JSON形式・出力言語を保持する．",
+    "sha256": "761ccbd36436922ebcc7ec51539d94f8958601af6502a78639c1254ff9b52610"
   }
 }

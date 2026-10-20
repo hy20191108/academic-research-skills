@@ -1,72 +1,33 @@
-# Third-party projects
+# 第三者のプロジェクト
 
-This page lists third-party projects, platforms, and services that build on, wrap,
-or integrate Academic Research Skills (ARS). It also acknowledges upstream projects
-whose mechanisms ARS has adapted (see **Upstream & related projects** below).
+以下は上流版の第三者情報の日本語訳である．ARSを基にした実装，連携サービスと，ARSが仕組みを取り入れたプロジェクトを記載する．
 
-## Disclaimer
+## 掲載と利用について
 
-**Listing here is not an endorsement.** The entries below are community-submitted
-and have **not been reviewed, tested, or verified** by the ARS maintainer. They are
-operated by independent third parties, not affiliated with this project.
+掲載は推奨を意味しない．掲載内容はコミュニティから寄せられたもので，ARSの保守者はレビュー・試験・検証を行っていない．各運営者は本プロジェクトから独立している．
+品質，安全性，プライバシー保護，継続提供を保守者が保証するものではない．外部サービスには独自の規約，料金，追跡，データ取扱方針がある．登録やアップロードの前に確認すること．
+利用は自己責任とし，未公開研究，個人情報，機密資料を渡す前に方針を確認すること．本リポジトリの送信先とローカル保存先は[データの送信先](docs/DATA_FLOWS.md)を参照する．この説明は以下の第三者サービスには適用されない．
 
-- Being listed here does not mean the maintainer vouches for the project's quality,
-  security, privacy practices, or continued availability.
-- Links may point to external platforms with their own terms, pricing, tracking, and
-  data-handling policies. Read them before you sign up or upload anything.
-- **Use at your own risk.** Do not paste unpublished research, personal data, or any
-  confidential material into a third-party service without checking its policies first.
+## 掲載申請と公式認定
 
-For contrast, the **core suite's own** network touchpoints and local stores are mapped
-in [docs/DATA_FLOWS.md](docs/DATA_FLOWS.md) — what leaves the machine, to which
-services, and how to turn each path off. That map covers this repository only, never
-the third-party projects below.
+上流版への掲載はIssueまたはプルリクエストで表への追加を申請する．ARSの名称と元リポジトリへのリンクを明示し，ARSと連携内容を正確に説明することが条件となる．条件違反，迷惑行為，マルウェアなどの有害な内容は，保守者が掲載を断るか削除できる．
+掲載と公式の支援・同梱は異なる．移植や正式な連携を主要READMEで紹介し，同梱する場合は，より厳しいコミュニティ保守の移植方針（Platform Port Reminder）に従い，上流版のIssueで相談する．
 
-If you want a project *reviewed and officially recognized* by ARS (rather than merely
-listed), that is a separate track — see **Getting officially recognized** below.
+## 掲載プロジェクト
 
-## How to get listed
+説明は申請者の主張を中立的に記したもので，保守者による検証はない．
 
-The bar to be listed here is intentionally low, and separate from endorsement. Open an
-issue or a pull request adding a row to the table. To be eligible, your project must:
+| プロジェクト | 運営者 | 内容 | リンク |
+| --- | --- | --- | --- |
+| ClawMama | kinhunt（第三者） | TelegramまたはWhatsAppでAcademic Research Pipelineの初回試用を提供する，OpenClaw/Hermes型のホスト型エージェント | [試用](https://app.clawmama.run/skills/639wu5/hermes?utm_source=github&utm_medium=issue&utm_campaign=skill_outreach_academic_research_skills) |
+| OrcaRouter | OrcaRouterチーム | OpenAI・Anthropic互換ゲートウェイ．`ARS_OPENAI_COMPAT_BASE_URL`と`ARS_CROSS_MODEL`でモデル間検証に使う．`anthropic/claude-sonnet-5`などの名前空間付きモデルIDは，根拠資料に基づかないOpenAI互換経路で処理する | [orcarouter.ai](https://www.orcarouter.ai) |
+| Academic Research Skills OpenClaw Port | ChunkyPanda29（第三者） | 4つのARSスキルをOpenClawへ移植し，各SKILL.mdの環境依存の表現を調整．書込み範囲のガードはフックではなく，スキルの手順として実行する | [リポジトリ](https://github.com/ChunkyPanda29/academic-research-skills-openclaw) |
+| md-to-word | ls-open（第三者） | MarkdownからWord（.docx）へ決定的に組版する．プレーンテキストのrequirements.txtで配置を指定し，出力前後に自動確認する．中国語の学位論文・投稿用DOCXを対象とし，指示語は中国語で説明されている | [リポジトリ](https://github.com/ls-open/md-to-word) |
 
-1. **Credit ARS** — visibly attribute Academic Research Skills and link back to this
-   repository.
-2. **Describe it faithfully** — do not misrepresent what ARS is or what your project
-   does with it.
+## ARSが参照したプロジェクト
 
-That is all that is required for a listing. The maintainer may decline or remove an
-entry that violates these two conditions, or that turns out to be spam, malware, or
-otherwise harmful.
+ARSが仕組みを取り入れた独立プロジェクトへの謝辞であり，推奨や提携を意味しない．帰属は対応するIssueとプルリクエストにも記録されている．
 
-## Getting officially recognized
-
-Listing on this page is *not* the same as ARS officially supporting or bundling your
-integration. If you are building a platform port or a first-class integration and want
-it recognized in the main README or shipped with the suite, that goes through the
-**platform-ports policy** (community-maintained ports), which sets a higher bar than a
-directory listing. See the Platform Port Reminder policy and open an issue to discuss.
-
-## Listed projects
-
-| Project | Maintainer | What it does | Link |
-|---------|-----------|--------------|------|
-| ClawMama | kinhunt (third party) | Hosted OpenClaw/Hermes-style agent offering a first-run trial of the Academic Research Pipeline via Telegram or WhatsApp | [Try in Telegram or WhatsApp](https://app.clawmama.run/skills/639wu5/hermes?utm_source=github&utm_medium=issue&utm_campaign=skill_outreach_academic_research_skills) |
-| OrcaRouter | OrcaRouter team | OpenAI- and Anthropic-compatible gateway usable as the cross-model verification provider in Academic Research Skills via `ARS_OPENAI_COMPAT_BASE_URL` + `ARS_CROSS_MODEL`, with namespaced model IDs (e.g. `anthropic/claude-sonnet-5`) routing through the ungrounded OpenAI-compatible path | [orcarouter.ai](https://www.orcarouter.ai) |
-| Academic Research Skills OpenClaw Port | ChunkyPanda29 (third party) | Port of the four ARS skills to the OpenClaw agent harness, adapting harness-specific wording in the four `SKILL.md` files; the write-scope guard runs as a step the skill performs rather than a hook | [ChunkyPanda29/academic-research-skills-openclaw](https://github.com/ChunkyPanda29/academic-research-skills-openclaw) |
-| md-to-word | ls-open (third party) | Deterministic Markdown → Word (`.docx`) typesetting engine: layout is declared in a plain-text `requirements.txt` and checked by automated gates before and after export; aimed at Chinese thesis and journal DOCX delivery (directive vocabulary currently documented in Chinese) | [ls-open/md-to-word](https://github.com/ls-open/md-to-word) |
-
-*Columns:* **Project** name as the third party calls it · **Maintainer** the account
-that submitted / operates it · **What it does** a one-line neutral description ·
-**Link** where it lives. Descriptions are the submitters' own claims, restated
-neutrally; the maintainer has not verified them.
-
-## Upstream & related projects
-
-The reverse direction: independent projects whose mechanisms ARS has adapted, with
-credit recorded in the corresponding issues and pull requests. Listing here is
-acknowledgement, not endorsement, and implies no affiliation.
-
-| Project | Maintainer | Relationship | Link |
-|---------|-----------|--------------|------|
-| sci-ssci-skills | [@MissOrangePeel](https://github.com/MissOrangePeel) (Yila-AI) | Origin of the claim-strength ladder + deterministic invariant-checking mechanism shape adapted into the v3.19.0 revision-round claim-drift guards (#569 / #570, PR [#571](https://github.com/Imbad0202/academic-research-skills/pull/571)) | [Yila-AI/sci-ssci-skills](https://github.com/Yila-AI/sci-ssci-skills) |
+| プロジェクト | 保守者 | 関係 | リンク |
+| --- | --- | --- | --- |
+| sci-ssci-skills | [@MissOrangePeel](https://github.com/MissOrangePeel)（Yila-AI） | v3.19.0の改稿時の主張変化を確認するガードが参照した，主張の強さの段階と決定的な不変条件確認の仕組み（#569，#570，[PR #571](https://github.com/Imbad0202/academic-research-skills/pull/571)） | [リポジトリ](https://github.com/Yila-AI/sci-ssci-skills) |

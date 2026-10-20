@@ -1,26 +1,24 @@
-# NOTICE
+# 原著者の声明
 
-## Personal Project Statement
+以下はCheng-I Wuによる声明の日本語訳である．
 
-This project (academic-research-skills) is a personal project by Cheng-I Wu (Imbad0202).
+## 個人プロジェクトであること
 
-**Development context:**
-- Developed in personal time using personal equipment
-- Uses personal AI subscriptions (Claude / Codex / Gemini etc., self-paid)
-- Does not contain confidential information from any employer
-- Domain knowledge applied is publicly available or personally researched
+academic-research-skillsはCheng-I Wu（Imbad0202）の個人プロジェクトである．
 
-**Relationship to employment:**
-- The author is currently employed in higher education quality assurance.
-- This project explores technical / methodological topics in that field.
-- It is not developed under employer direction or using employer resources.
-- Views and code are the author's own, not the employer's.
+開発環境：
+- 個人の時間と機材で開発している．
+- Claude，Codex，GeminiなどのAIは個人契約し，自費で利用している．
+- 雇用主の機密情報は含まない．
+- 専門知識は公開情報または個人の調査に基づく．
 
-## Governance
+雇用との関係：
+- 原著者は高等教育の質保証に従事している．
+- 本プロジェクトは同分野の技術・方法論を探究する．
+- 雇用主の指示や資源による開発ではない．
+- 見解とコードは原著者個人のものであり，雇用主のものではない．
 
-How decisions are made, what cross-model review does and does not provide, and the
-end-of-life posture are stated in [GOVERNANCE.md](GOVERNANCE.md).
+## 運営とライセンス
 
-## License
-
-See LICENSE file for terms.
+意思決定，モデル間レビューの役割と限界，保守終了時の方針については[GOVERNANCE.md](GOVERNANCE.md)を参照する．
+ライセンス条件は[LICENSE](LICENSE)を参照する．
